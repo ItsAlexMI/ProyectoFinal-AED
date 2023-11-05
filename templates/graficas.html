@@ -1,0 +1,59 @@
+{%extends 'layout.html'%} {%block title%} Graficas {%endblock%} {%block
+content%}
+
+
+<h1 class="text-2xl font-bold mb-4 text-white">Estadisticas de ventas</h1>
+
+<div class=" overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <caption
+      class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800"
+    >
+      Tabla de ventas
+      <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+        Tabla con todas las ventas registradas con informacion detallada de cada
+        una.
+      </p>
+    </caption>
+    <thead
+      class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+    >
+      <tr>
+        <th scope="col" class="px-6 py-3">Producto</th>
+        <th scope="col" class="px-6 py-3">Fecha de venta</th>
+
+        <th scope="col" class="px-6 py-3">Cantidad vendida</th>
+        <th scope="col" class="px-6 py-3">Ganancias totales de la venta</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for venta in ventas %}
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        >
+          {{ venta.NombreProductoVendido }}
+        </th>
+        <td class="px-6 py-4">{{ venta.FechaVenta }}</td>
+        
+        <td class="px-6 py-4">{{ venta.CantidadVendida }}</td>
+
+        <td class="px-6 py-4">${{ venta.TotalVentas }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="graficas mt-10">
+  <h1 class="text-2xl font-bold mb-4 text-white">
+    Gráfico de productos con mas ganancias
+  </h1>
+  <div style="max-width: 80%; margin: auto">
+    <canvas id="graficoProductosMasGanancias" style="max-height: 800px"></canvas>
+  </div>
+</div>
+
+
+{%endblock%}

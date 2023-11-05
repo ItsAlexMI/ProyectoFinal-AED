@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Editar Producto
+{% endblock %}
+
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-4 text-white">Editar Producto</h1>
+
+<form action="/editar-producto/{{ producto.ProductoID }}" class="bg-white p-6 rounded shadow-sm" method="POST">
+    
+    <input type="hidden" name="CategoriaID" value="{{ producto.CategoriaID }}">
+
+    <label class="block text-gray-700 font-medium mb-2" for="NombreProducto">Nombre del Producto:</label>
+    <input type="text" name="NombreProducto" value="{{ producto.NombreProducto }}" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500"><br><br>
+    
+    <label for="Cantidad" class="block text-gray-700 font-medium mt-4 mb-2">Cantidad:</label>
+    <input type="text" name="Cantidad" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+
+    <label for="PrecioOriginal" class="block text-gray-700 font-medium mt-4 mb-2">Precio Original:</label>
+    <input type="text" name="PrecioOriginal" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+
+    <label for="PrecioVenta" class="block text-gray-700 font-medium mt-4 mb-2">Precio de Venta:</label>
+    <input type="text" name="PrecioVenta" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+
+    <label for="FechaActualizacion" class="block text-gray-700 font-medium mt-4 mb-2">Fecha de Actualización:</label>
+    <input type="date" name="FechaActualizacion" id="FechaActualizacion" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-1">
+
+    <input type="hidden" name="categoria" value="{{ producto.NombreCategoria }}">
+    <input type="hidden" name="descripcion" value="{{ producto.Descripcion }}">
+
+    <input type="submit" value="Editar Producto" class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded mt-10">
+</form>
+
+<script>
+    var fechaActualizacionInput = document.getElementById("FechaActualizacion");
+  
+    var fechaActual = new Date();
+  
+    var year = fechaActual.getFullYear();
+    var month = String(fechaActual.getMonth() + 1).padStart(2, '0'); 
+    var day = String(fechaActual.getDate()).padStart(2, '0'); 
+    var fechaActualFormateada = year + "-" + month + "-" + day;
+  
+    fechaActualizacionInput.value = fechaActualFormateada;
+  </script>
+
+
+{% endblock %}

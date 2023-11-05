@@ -1,0 +1,61 @@
+{%extends 'layout.html'%} {%block title%} Inicio {%endblock%} {%block
+content%}
+
+<div class="flex">
+  <div class="w-3/4 p-4">
+    <!-- Contenido de la izquierda (tarjetas) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {% for producto in productos_propios %}
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-center">
+          {{ producto.NombreProducto }}
+        </h3>
+        <p class="text-sm text-gray-600 text-center">
+          {{ producto.NombreCategoria }}
+        </p>
+        <p class="text-sm text-gray-600 text-center">{{ producto.Descripcion }}</p>
+        <p class="text-sm text-center">Cantidad: {{ producto.Cantidad }}</p>
+        <p class="text-sm text-center">
+          Fecha de Actualización: {{ producto.FechaActualizacion }}
+        </p>
+        <p class="text-sm text-center">
+          Precio Original: ${{ producto.PrecioOriginal }}
+        </p>
+        <p class="text-sm text-center">
+          Precio de Venta: ${{ producto.PrecioVenta }}
+        </p>
+    
+        <div class="flex justify-center">
+          <a
+            href="/editar-producto/{{ producto.ProductoID }}"
+            class="bg-slate-500 hover-bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded mt-10"
+            >Editar</a
+          >
+    
+          <a
+            href="/eliminar-producto/{{ producto.ProductoID }}"
+            class="ml-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-950 hover:border-red-800 rounded mt-10"
+            >Eliminar</a
+          >
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="w-1/4 p-4">
+    <div class="graficas">
+      <h1 class="text-2xl font-bold mb-4 text-white">
+        Gráfico de productos con mas cantidad en stock
+      </h1>
+      <div style="max-width: 100%; margin: auto">
+        <canvas id="graficoProductosMasVendidos" style="max-height: 800px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+

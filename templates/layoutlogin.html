@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <title>{%block title%} {%endblock%}</title>
+  </head>
+  <body class="flex justify-center items-center h-screen">
+    {% block content %} {% endblock %}
+
+    <script
+      type="module"
+      src="{{ url_for('static', filename='js/login.js') }}"
+    ></script>
+
+<script>
+  // Bloquear la función de zoom
+document.addEventListener('gesturestart', function (e) {
+  e.preventDefault();
+});
+
+// Otra forma de bloquear la función de zoom
+document.addEventListener('touchmove', function(event) {
+  if (event.scale !== 1) { event.preventDefault(); }
+}, { passive: false });
+</script>
+
+    
+    <style>
+      
+      .container-form {
+        height: 500px;
+        max-width: 900px;
+      }
+      .form label i {
+        color: #a7a7a7;
+      }
+
+      .hide {
+        position: absolute;
+        transform: translateY(300%);
+      }
+
+      @media screen and (max-width: 750px) {
+        html {
+          font-size: 12px;
+        }
+
+        .imagen-hombre {
+          display: none;
+        }
+      }
+          @media screen and (max-width: 580px) {
+            html {
+              font-size: 10px;
+            }
+
+            .imagen-hombre {
+              display: none;
+            }
+
+            .container-form {
+              height: auto;
+              flex-direction: column;
+            }
+            .information {
+              width: 100%;
+              padding: 20px;
+              border-top-left-radius: 20px;
+              border-top-right-radius: 20px;
+              border-bottom-left-radius: 0px;
+              border-bottom-right-radius: 0;
+            }
+
+            .form-information {
+              width: 100%;
+              padding: 20px;
+              border-top-right-radius: 0px;
+              border-bottom-left-radius: 20px;
+            }
+          }
+
+          body {
+      overflow: hidden;
+    }
+
+    </style>
+  </body>
+</html>

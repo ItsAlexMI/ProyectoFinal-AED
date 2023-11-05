@@ -1,0 +1,168 @@
+{%extends 'layoutlogin.html'%} {%block title%} Login {%endblock%} {%block
+content%}
+
+<div class="p-0 m-0 box-border font-sans">
+  <div
+    class="container-form flex rounded-lg shadow-md transition-transform duration-1000 ease-in-out m-10 register"
+  >
+    <div
+      class="information w-2/5 flex items-center justify-center text-center bg-slate-700 rounded-l-lg"
+    >
+      <div class="info-childs w-full px-30">
+        <h2 class="text-2xl text-white font-bold mb-10">Bienvenido</h2>
+        <img
+          class="ml-10 imagen-hombre"
+          src="{{ url_for('static', filename='images/hombre2.png') }}"
+          alt=""
+        />
+        <p class="my-4 text-gray-400 font-sans">
+          Si ya tienes una cuenta registrada, inicia sesion aca
+        </p>
+        <button
+        class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded"
+          id="sign-in"
+        >
+          Iniciar Sesion
+        </button>
+      </div>
+    </div>
+    <div
+      class="form-information w-3/5 flex justify-center items-center bg-gray-200 rounded-r-lg"
+    >
+      <div class="form-information-childs px-30">
+        <h2 class="text-2xl text-gray-700 font-bold mt-0">Registrar una cuenta</h2>
+        <p class="text-gray-400 font-sans">
+          Ingrese los siguientes datos para registrar una cuenta
+        </p>
+        <div class="mt-10">
+          <form class="form" action="/register" method="POST">
+            <label
+              class="flex items-center mb-6 rounded-lg px-4 py-2 bg-white shadow-md"
+            >
+              <i class="bx bx-user"></i>
+              <input
+                class="w-full p-2 bg-white rounded-lg border outline-none text-gray-700"
+                type="text"
+                placeholder="Nombre de usuario"
+                name="nombre"
+                id=""
+                required
+              />
+            </label>
+
+            <label
+              class="flex items-center mb-6 rounded-lg px-4 py-2 bg-white shadow-md"
+            >
+              <i class="bx bx-envelope"></i>
+              <input
+                class="w-full p-2 bg-white rounded-lg border outline-none text-gray-700"
+                type="email"
+                placeholder="Correo electronico"
+                name="email-register"
+                id=""
+                required
+              />
+            </label>
+
+            <label
+              class="flex items-center mb-6 rounded-lg px-4 py-2 bg-white shadow-md"
+            >
+              <i class="bx bx-lock-alt"></i>
+              <input
+                class="w-full p-2 bg-white rounded-lg border outline-none text-gray-700"
+                type="password"
+                placeholder="Contraseña"
+                name="password-register"
+                id=""
+                required
+              />
+            </label>
+
+            <button
+            class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded"
+            type="submit"
+            >
+              Registrarse
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="container-form flex rounded-lg shadow-md transition-transform duration-1000 ease-in-out m-32 login hide"
+  >
+    <div
+    class="information w-2/5 flex items-center justify-center text-center bg-slate-700 rounded-l-lg"
+    >
+      <div class="info-childs w-full px-30">
+        <h2 class="text-2xl text-white font-bold mb-10">Bienvenido</h2>
+        <img
+          class="ml-10 imagen-hombre"
+          src="{{ url_for('static', filename='images/hombre1.png') }}"
+          alt=""
+        />
+        <p class="my-4 text-gray-400 font-sans">
+          Si no tienes una cuenta, registra una aca
+        </p>
+        <button
+        class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded"
+          id="sign-up"
+        >
+          Registrate
+        </button>
+      </div>
+    </div>
+    <div
+      class="form-information w-3/5 flex justify-center items-center bg-gray-200 rounded-r-lg"
+    >
+      <div class="form-information-childs px-30">
+        <h2 class="text-2xl text-gray-700 font-bold mt-0">Iniciar Sesion</h2>
+
+        <p class="text-gray-400 font-sans mb-20">
+          Ingrese los siguientes datos para registrar una cuenta
+        </p>
+        <div class="mt-10">
+          <form class="form" action="/login" method="POST">
+            <label
+              class="flex items-center mb-6 rounded-lg px-4 py-2 bg-white shadow-md"
+            >
+              <i class="bx bx-envelope"></i>
+              <input
+                class="w-full p-2 bg-white rounded-lg border outline-none text-gray-700"
+                type="email"
+                placeholder="Correo electronico"
+                name="email-login"
+                id=""
+                required
+              />
+            </label>
+
+            <label
+              class="flex items-center mb-6 rounded-lg px-4 py-2 bg-white shadow-md"
+            >
+              <i class="bx bx-lock-alt"></i>
+              <input
+                class="w-full p-2 bg-white rounded-lg border outline-none text-gray-700"
+                type="password"
+                placeholder="Contraseña"
+                name="password-login"
+                id=""
+                required
+              />
+            </label>
+
+            <button
+            class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded"
+            type="submit"
+            >
+              Iniciar Sesion
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

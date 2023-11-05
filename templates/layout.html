@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie-edge" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .navbar {
+        transform: translateY(-100%); /* Inicialmente oculto arriba */
+        transition: transform 1.5s ease; /* Transición suave */
+      }
+      .navbar.visible {
+        transform: translateY(0); /* Aparece desde arriba */
+      }
+
+      .sidebar {
+        transform: translateX(-100%); /* Inicialmente oculto a la izquierda */
+        transition: transform 1.5s ease; /* Transición suave */
+      }
+      .sidebar.visible {
+        transform: translateX(0); /* Aparece desde la izquierda */
+      }
+      
+
+      @media screen and (max-width: 750px) {
+    .graficas {
+      display: none;
+    }
+
+    .sidebar {
+      height: 100vh;
+      overflow-y: auto;
+    }
+  }
+
+  @media screen and (max-width: 580px) {
+    .graficos {
+      display: none;
+    }
+
+    .sidebar {
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+  }
+    </style>
+    <title>{%block title%} {%endblock%}</title>
+  </head>
+  <body class="m-0 p-0 bg-slate-950">
+    <!-- Navbar -->
+    <nav
+      class="navbar bg-slate-900 text-white py-2 px-4 border-b-2 border-slate-800"
+    >
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <!-- Logo o título de la aplicación -->
+          <span class="text-xl font-semibold">Mi Dashboard</span>
+        </div>
+        <div class="flex items-center">
+          <!-- Botón para desplegar botones -->
+          <div
+            id="toggleButtons"
+            class="text-white cursor-pointer hover:bg-slate-600 p-2"
+          >
+            {% if url_imagen_perfil %}
+            <img
+              src="{{ url_imagen_perfil }}"
+              alt="Imagen de perfil"
+              class="w-10 h-10 rounded-full"
+            />
+            {% endif%}
+          </div>
+          <!-- Botones desplegables (inicialmente ocultos) -->
+          <div
+            id="buttonDropdown"
+            class="hidden absolute right-0 mt-48 w-32 bg-white text-black border border-gray-300 rounded-lg shadow-md mr-0"
+          >
+            <ul>
+              <li class="py-2 px-4 hover:bg-gray-100">Opción 1</li>
+              <li class="py-2 px-4 hover-bg-gray-100">Opción 2</li>
+              <li class="py-2 px-4 hover-bg-gray-100">Opción 3</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="flex">
+      <div
+        id="sidebar"
+        class="sidebar w-16 bg-slate-900 h-screen border-r-2 border-slate-800"
+      >
+        <div class="p-2">
+          <div
+            id="toggleSidebar"
+            class="text-white cursor-pointer hover:bg-slate-600 p-2"
+          >
+            <i class="bx bx-menu" style="font-size: 28px"></i>
+          </div>
+          <ul class="mt-4">
+
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <a href="/" class="bx bx-home icon" style="font-size: 20px"></a>
+              <a
+                href="/"
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Inicio</a
+              >
+            </li>
+
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <a href="/agregar-producto" class="bx bx-cart-add icon" style="font-size: 20px"></a>
+              <a
+                href="/agregar-producto" class="text transition-opacity duration-300 ease-in-out hidden"
+                >Agregar</a
+              >
+            </li>
+            
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <a href="/vender-producto" class="bx bx-dollar icon" style="font-size: 20px"></a>
+              <a
+                href="/vender-producto" class="text transition-opacity duration-300 ease-in-out hidden"
+                >Vender</a
+              >
+            </li>
+
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <a href="/graficas" class="bx bx-bar-chart icon" style="font-size: 20px"></a>
+              <a
+                href="/graficas" class="text transition-opacity duration-300 ease-in-out hidden"
+                >Estadísticas</a
+              >
+            </li>
+
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <i class="bx bx-line-chart icon" style="font-size: 20px"></i>
+              <span
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Estadísticas</span
+              >
+            </li>
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <i class="bx bx-group icon" style="font-size: 20px"></i>
+              <span
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Usuarios</span
+              >
+            </li>
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <i class="bx bx-cog icon" style="font-size: 20px"></i>
+              <span
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Configuración</span
+              >
+            </li>
+            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+              <a
+                href="/logout"
+                class="bx bx-log-out icon"
+                style="font-size: 20px"
+              ></a>
+              <a
+                href="/logout"
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Cerrar sesión</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="content" class="flex-1 p-8 text-black">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+    <script>
+      // JavaScript para agregar la clase "visible" a la barra lateral
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          const sidebar = document.querySelector("#sidebar");
+          sidebar.classList.add("visible");
+        }, 1000); // Espera 1 segundo antes de mostrar la barra lateral
+      });
+    </script>
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const toggleSidebar = document.getElementById("toggleSidebar");
+      const sidebarText = document.querySelectorAll(".text");
+      let sidebarExpanded = false; // Inicialmente, la barra lateral está minimizada.
+
+      toggleSidebar.addEventListener("click", () => {
+        sidebarExpanded = !sidebarExpanded;
+        if (sidebarExpanded) {
+          sidebar.classList.remove("w-16");
+          sidebar.classList.add("w-64");
+          sidebarText.forEach((item) => {
+            item.classList.remove("hidden");
+          });
+        } else {
+          sidebar.classList.remove("w-64");
+          sidebar.classList.add("w-16");
+          sidebarText.forEach((item) => {
+            item.classList.add("hidden");
+          });
+        }
+      });
+    </script>
+    <script>
+      // JavaScript para agregar la clase "visible" a la barra de navegación
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          const navbar = document.querySelector(".navbar");
+          navbar.classList.add("visible");
+        }, 1000); // Espera 1 segundo antes de mostrar la navbar
+      });
+    </script>
+    <script>
+      const toggleButtons = document.getElementById("toggleButtons");
+      const buttonDropdown = document.getElementById("buttonDropdown");
+
+      toggleButtons.addEventListener("click", () => {
+        buttonDropdown.classList.toggle("hidden");
+      });
+    </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  $(document).ready(function () {
+    // Realiza una solicitud AJAX para obtener los datos desde tu servidor
+    $.ajax({
+      url: "/Stock",  // Reemplaza esto con la ruta correcta en tu aplicación
+      method: "GET",
+      success: function (data) {
+        var nombresProductos = data.map(function (producto) {
+          return producto.NombreProducto;
+        });
+
+        
+        var cantidadesProductos = data.map(function (producto) {
+          return producto.Cantidad;
+        });
+        var barColors = [
+  "#b91d47",
+  "#00aba9",
+  "#2b5797",
+  "#e8c3b9",
+  "#1e7145"
+];
+        var ctx = document.getElementById('graficoProductosMasVendidos').getContext('2d');
+        var chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: nombresProductos,
+            datasets: [{
+              label: 'Cantidades en stock',
+              data: cantidadesProductos,
+              backgroundColor: barColors,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,  // Hace que el gráfico sea responsivo
+            maintainAspectRatio: false,  // Permite ajustar el tamaño del gráfico
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      }
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+    // Realiza una solicitud AJAX para obtener los datos desde tu servidor
+    $.ajax({
+      url: "/Ganancias",  // Reemplaza esto con la ruta correcta en tu aplicación
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalVentas = data.map(function (producto) {
+          return producto.TotalVentas;
+        });
+        
+        var ctx = document.getElementById('graficoProductosMasGanancias').getContext('2d');
+        var chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: nombreProducto,
+            datasets: [{
+              data: totalVentas,
+              backgroundColor: [
+                "#b91d47",
+                "#00aba9",
+                "#2b5797",
+                "#e8c3b9",
+                "#1e7145"
+              ]
+            }]
+          },
+          options: {
+            responsive: true,  // Hace que el gráfico sea responsivo
+            maintainAspectRatio: false,  // Permite ajustar el tamaño del gráfico
+          }
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      }
+    });
+  });
+</script>
+
+  </body>
+</html>
