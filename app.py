@@ -62,11 +62,11 @@ def obtenerGanancia():
 
     user_id = session.get('user_id')
 
-    resultados = db.execute("SELECT NombreProductoVendido, TotalVentas FROM Ventas WHERE UsuarioID = ? ORDER BY TotalVentas DESC LIMIT 5", user_id)
+    resultados = db.execute("SELECT NombreProductoVendido, SUM(TotalVentas) AS GananciasTotales FROM Ventas WHERE UsuarioID = ? GROUP BY NombreProductoVendido ORDER BY GananciasTotales DESC LIMIT 5", user_id)
 
     # Convierte los resultados en una lista de diccionarios
-    productos_mas_ganancias = [{"NombreProductoVendido": row["NombreProductoVendido"], "TotalVentas": row["TotalVentas"]} for row in resultados]
-    
+    productos_mas_ganancias = [{"NombreProductoVendido": row["NombreProductoVendido"], "TotalVentas": row["GananciasTotales"]} for row in resultados]
+
     return jsonify(productos_mas_ganancias)
 
 @app.route('/loading')
@@ -79,6 +79,9 @@ def loading():
 def index():
     url_imagen_perfil = capturar_foto()
     productos_mas_vendidos = obtenerStock()
+
+    
+
 
     
 
@@ -99,10 +102,14 @@ def index():
     WHERE I.UsuarioID = ?
     """, UsuarioID)
 
+    gananciasTotales = db.execute("SELECT SUM(TotalVentas) AS GananciaTotal FROM Ventas WHERE UsuarioID = ?", UsuarioID)
+
+
+
     if productos_mas_vendidos is not None:
-        return render_template('index.html', productos_mas_vendidos=productos_mas_vendidos, url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios)
+        return render_template('index.html', productos_mas_vendidos=productos_mas_vendidos, url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales)
     else:
-        return render_template('index.html', url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios)
+        return render_template('index.html', url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales)
     
 
 
