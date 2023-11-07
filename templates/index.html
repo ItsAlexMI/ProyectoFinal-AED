@@ -1,21 +1,68 @@
 {%extends 'layout.html'%} {%block title%} Inicio {%endblock%} {%block
 content%}
 
-<div class="bg-opacity-5 bg-white p-4 rounded-lg shadow-md ml-4">
+<div class="p-4 rounded-lg shadow-md datos">
   <div class="flex items-center">
-    <i class="bx bx-money-withdraw text-2xl mr-2" style="color: white"></i>
-    {% for ganancia in gananciasTotales %}
-      {% if ganancia.GananciaTotal %}
-        <h1 class="text-2xl font-bold mb-4 text-white ml-4 mt-3">
-          Ganancias totales {{ ganancia.GananciaTotal }}$
-        </h1>
-      {% endif %}
-    {% endfor %}
+
+    <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
+      <i class="bx bxs-dashboard text-2xl ml-4" style="color: white"></i>
+      {%for cantidad in cantidadProductos%}
+        <div class="my-2">
+          {% if cantidad.Cantidad %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Cantidad de productos: {{ cantidad.Cantidad }}
+            </h1>
+          {% else %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Cantidad de productos: 0
+            </h1>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
+      <i class="bx bxs-dollar-circle text-2xl mr-2" style="color: white"></i>
+      {% for ventas in ventasTotales %}
+        <div class="my-2">
+          {% if ventas.CantidadVendida %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Ventas totales: {{ ventas.CantidadVendida }}
+            </h1>
+          {% else %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Ventas totales: 0
+            </h1>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
+      <i class="bx bxs-badge-dollar text-2xl mr-2" style="color: white"></i>
+      {% for ganancia in gananciasTotales %}
+        <div class="my-2">
+          {% if ganancia.GananciaTotal %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Ganancias totales: {{ ganancia.GananciaTotal }}$
+            </h1>
+          {% else %}
+            <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+              Ganancias totales: $0
+            </h1>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+
   </div>
 </div>
 
 
-<div class="flex">
+
+
+<div class="flex ml-2">
   <div class="w-3/4 p-4">
     <!-- Contenido de la izquierda (tarjetas) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -57,8 +104,8 @@ content%}
     </div>
   </div>
   <div class="w-1/4 p-4">
-    <div class="graficas">
-      <h1 class="text-2xl font-bold mb-4 text-white">
+    <div class="graficas bg-white p-4 rounded-lg text-white">
+      <h1 class="text-2xl font-bold mb-4 text-black">
         Gráfico de productos con mas cantidad en stock
       </h1>
       <div style="max-width: 100%; margin: auto">

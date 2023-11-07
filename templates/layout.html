@@ -21,6 +21,11 @@
       rel="stylesheet"
     />
     <style>
+
+body{
+  overflow: hidden;
+}
+
       .navbar {
         transform: translateY(-100%); /* Inicialmente oculto arriba */
         transition: transform 1.5s ease; /* Transición suave */
@@ -32,6 +37,8 @@
       .sidebar {
         transform: translateX(-100%); /* Inicialmente oculto a la izquierda */
         transition: transform 1.5s ease; /* Transición suave */
+        height: 1200px;
+ 
       }
       .sidebar.visible {
         transform: translateX(0); /* Aparece desde la izquierda */
@@ -42,10 +49,16 @@
     .graficas {
       display: none;
     }
-
+.estadisticas {
+  display: none;
+}
     .sidebar {
       height: 100vh;
       overflow-y: auto;
+    }
+    
+    .datos {
+      display: none;
     }
   }
 
@@ -54,9 +67,16 @@
       display: none;
     }
 
+    .estadisticas {
+      display: none;
+    }
     .sidebar {
       height: 100vh;
       overflow-y: auto;
+    }
+
+    .datos {
+      display: none;
     }
     
   }
@@ -90,13 +110,38 @@
           <!-- Botones desplegables (inicialmente ocultos) -->
           <div
             id="buttonDropdown"
-            class="hidden absolute right-0 mt-48 w-32 bg-white text-black border border-gray-300 rounded-lg shadow-md mr-0"
+            class="hidden absolute right-0 mt-56 bg-opacity-4 w-56 bg-slate-600 border border-gray-300 rounded-lg shadow-md mr-5"
           >
-            <ul>
-              <li class="py-2 px-4 hover:bg-gray-100">Opción 1</li>
-              <li class="py-2 px-4 hover-bg-gray-100">Opción 2</li>
-              <li class="py-2 px-4 hover-bg-gray-100">Opción 3</li>
-            </ul>
+          <ul class="flex items-center">
+            {% if username %}
+              {% if url_imagen_perfil %}
+                <li class="py-2 px-4 font-bold flex items-center">
+                  <img
+                    src="{{ url_imagen_perfil }}"
+                    alt="Imagen de perfil"
+                    class="w-10 h-10 rounded-full mr-2"
+                  />
+                  {{ username }}
+                </li>
+              {% else %}
+                <li class="py-2 px-4 font-bold">{{ username }}</li>
+              {% endif %}
+            {% endif %}
+          
+           
+          </ul>
+          <ul class="flex items-center border-y border-white border-solid  border-white">
+            {% if correo %}
+              <li class="py-2 px-4 flex items-center ">
+                <i class="bx bxs-envelope icon font-bold rounded-full ml-1" style="font-size: 30px"></i>
+                <span class="ml-2 text-gray-300">{{ correo }}</span>
+              </li>
+            {% endif %}
+          </ul>
+          
+      <ul class="flex items-center">
+        <a href="/cambiar-foto" class="bg-slate-500 hover-bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded mt-5 mb-5 ml-3">Cambiar foto de perfil</a>
+      </ul>
           </div>
         </div>
       </div>
@@ -104,7 +149,7 @@
     <div class="flex">
       <div
         id="sidebar"
-        class="sidebar w-16 bg-slate-900 h-screen border-r-2 border-slate-800"
+        class="sidebar w-16 bg-slate-900 border-r-2 border-slate-800"
       >
         <div class="p-2">
           <div
@@ -140,35 +185,32 @@
               >
             </li>
 
-            <li class="text-white hover:bg-slate-600 mt-5 p-2">
-              <a href="/graficas" class="bx bx-bar-chart icon" style="font-size: 20px"></a>
+            <li class="estadisticas text-white hover:bg-slate-600 mt-5 p-2">
+              <a href="/graficas" class="bx bx-line-chart icon" style="font-size: 20px"></a>
               <a
                 href="/graficas" class="text transition-opacity duration-300 ease-in-out hidden"
                 >Estadísticas</a
               >
             </li>
 
-            <li class="text-white hover:bg-slate-600 mt-5 p-2">
-              <i class="bx bx-line-chart icon" style="font-size: 20px"></i>
-              <span
-                class="text transition-opacity duration-300 ease-in-out hidden"
-                >Estadísticas</span
-              >
-            </li>
-            <li class="text-white hover:bg-slate-600 mt-5 p-2">
-              <i class="bx bx-group icon" style="font-size: 20px"></i>
-              <span
-                class="text transition-opacity duration-300 ease-in-out hidden"
-                >Usuarios</span
-              >
-            </li>
-            <li class="text-white hover:bg-slate-600 mt-5 p-2">
+
+            <li class="text-white hover:bg-slate-600 mt-5 p-2 cursor-pointer" id="config-button">
               <i class="bx bx-cog icon" style="font-size: 20px"></i>
-              <span
-                class="text transition-opacity duration-300 ease-in-out hidden"
-                >Configuración</span
-              >
+              <span class="text transition-opacity duration-300 ease-in-out hidden" id="config-text">Configuración</span>
+              <i class='text bx bx-chevron-down' style='font-size: 20px;' ></i>
             </li>
+            
+            <div class="hidden text-white ml-5 mt-2" id="config-options">
+              <ul>
+                <a href="/cambiar-foto" class="bx bxs-user-circle icon" style="font-size: 20px"  ></a>
+                <a href="/cambiar-foto" class="text transition-opacity duration-300 ease-in-out hidden">Cambiar foto de perfil</a>
+              </ul>
+            <ul class="mt-2">
+              <a href="/cambiar-datos" class="bx bxs-data" style="font-size: 20px"><a href="/cambiar-datos" class="text transition-opacity duration-300 ease-in-out hidden">Cambiar datos</a></a>
+            </ul>
+            </div>
+            
+            
             <li class="text-white hover:bg-slate-600 mt-5 p-2">
               <a
                 href="/logout"
@@ -184,11 +226,26 @@
           </ul>
         </div>
       </div>
-      <div id="content" class="flex-1 p-8 text-black">
+      <div id="content" class="flex-1  p-8 text-black">
         {% block content %}
         {% endblock %}
       </div>
     </div>
+
+    <script>
+      document.getElementById("config-button").addEventListener("click", function() {
+        var configOptions = document.getElementById("config-options");
+        
+        if (configOptions.classList.contains("hidden")) {
+          configOptions.classList.remove("hidden");
+        } else {
+          configOptions.classList.add("hidden");
+        }
+      });
+    </script>
+    
+    
+    
     <script>
       // JavaScript para agregar la clase "visible" a la barra lateral
       document.addEventListener("DOMContentLoaded", function () {
@@ -225,11 +282,37 @@
       // JavaScript para agregar la clase "visible" a la barra de navegación
       document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
-          const navbar = document.querySelector(".navbar");
-          navbar.classList.add("visible");
-        }, 1000); // Espera 1 segundo antes de mostrar la navbar
+      const navbar = document.querySelector(".navbar");
+      const sidebar = document.querySelector("#sidebar");
+      const configText = document.getElementById("config-text");
+
+      navbar.classList.add("visible");
+      sidebar.classList.add("visible");
+
+      const toggleSidebar = document.getElementById("toggleSidebar");
+      let sidebarExpanded = false;
+
+      toggleSidebar.addEventListener("click", () => {
+        sidebarExpanded = !sidebarExpanded;
+        if (sidebarExpanded) {
+          sidebar.classList.remove("w-16");
+          sidebar.classList.add("w-64");
+          sidebarText.forEach((item) => {
+            item.classList.remove("hidden");
+          });
+          configText.classList.remove("hidden"); // Mostrar el texto al desplegar
+        } else {
+          sidebar.classList.remove("w-64");
+          sidebar.classList.add("w-16");
+          sidebarText.forEach((item) => {
+            item.classList.add("hidden");
+          });
+          configText.classList.add("hidden"); // Ocultar el texto al contraer
+        }
       });
-    </script>
+    }, 1000);
+  });
+</script>
     <script>
       const toggleButtons = document.getElementById("toggleButtons");
       const buttonDropdown = document.getElementById("buttonDropdown");
@@ -311,7 +394,7 @@
         
         var ctx = document.getElementById('graficoProductosMasGanancias').getContext('2d');
         var chart = new Chart(ctx, {
-          type: 'pie',
+          type: 'doughnut',
           data: {
             labels: nombreProducto,
             datasets: [{
@@ -336,6 +419,143 @@
       }
     });
   });
+</script>
+
+<script>
+  $(document).ready(function () {
+    // Realiza una solicitud AJAX para obtener los datos desde tu servidor
+    $.ajax({
+      url: "/ProductoMasVendido",  // Reemplaza esto con la ruta correcta en tu aplicación
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalCantidad = data.map(function (producto) {
+          return producto.CantidadVendida;
+        });
+        
+        var ctx = document.getElementById('graficoProductosMasVendido').getContext('2d');
+        var chart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: nombreProducto,
+            datasets: [{
+              data: totalCantidad,
+              backgroundColor: [
+                "#b91d47",
+                "#00aba9",
+                "#2b5797",
+                "#e8c3b9",
+                "#1e7145"
+              ]
+            }]
+          },
+          options: {
+            responsive: true,  // Hace que el gráfico sea responsivo
+            maintainAspectRatio: false,  // Permite ajustar el tamaño del gráfico
+          }
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      }
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+    // Realiza una solicitud AJAX para obtener los datos desde tu servidor
+    $.ajax({
+      url: "/Fechas",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          // Convierte la fecha en una cadena de texto legible
+          return new Date(producto.FechaVenta).toLocaleDateString();
+        });
+
+        var totalFechas = data.map(function (producto) {
+          return producto.CantidadVendida;
+        });
+        
+        var ctx = document.getElementById('graficoFechas').getContext('2d');
+        var chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: nombreProducto,
+            datasets: [{
+              data: totalFechas,
+              backgroundColor: [
+                "#b91d47",
+                "#00aba9",
+                "#2b5797",
+                "#e8c3b9",
+                "#1e7145"
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+
+        // Elimina la leyenda del gráfico
+        chart.options.plugins.legend.display = false;
+        chart.update();
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      }
+    });
+  });
+</script>
+
+
+<script>
+  const prevPageButton = document.getElementById('prevPage');
+  const nextPageButton = document.getElementById('nextPage');
+  const itemsPerPage = 10; // Cantidad de elementos por página
+  let currentPage = 1; // Página actual
+
+  // Función para mostrar u ocultar las filas de la tabla según la página
+  function showPage(page) {
+    const rows = document.querySelectorAll('.pagination');
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = page * itemsPerPage;
+
+    rows.forEach((row, index) => {
+      if (index >= startIndex && index < endIndex) {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Evento para ir a la página anterior
+  prevPageButton.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage);
+    }
+  });
+
+  // Evento para ir a la página siguiente
+  nextPageButton.addEventListener('click', () => {
+    const totalRows = document.querySelectorAll('.pagination').length;
+    const totalPages = Math.ceil(totalRows / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      showPage(currentPage);
+    }
+  });
+
+  // Mostrar la primera página al cargar la página
+  showPage(currentPage);
 </script>
 
   </body>

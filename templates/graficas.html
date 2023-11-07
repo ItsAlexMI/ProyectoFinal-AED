@@ -2,58 +2,108 @@
 content%}
 
 
-<h1 class="text-2xl font-bold mb-4 text-white">Estadisticas de ventas</h1>
+<h1 class="text-2xl font-bold text-white">Estadisticas de ventas</h1>
 
-<div class=" overflow-x-auto shadow-md sm:rounded-lg">
-  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    <caption
-      class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800"
-    >
-      Tabla de ventas
-      <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-        Tabla con todas las ventas registradas con informacion detallada de cada
-        una.
-      </p>
-    </caption>
-    <thead
-      class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-    >
-      <tr>
-        <th scope="col" class="px-6 py-3">Producto</th>
-        <th scope="col" class="px-6 py-3">Fecha de venta</th>
-
-        <th scope="col" class="px-6 py-3">Cantidad vendida</th>
-        <th scope="col" class="px-6 py-3">Ganancias totales de la venta</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for venta in ventas %}
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-        <th
-          scope="row"
-          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-        >
-          {{ venta.NombreProductoVendido }}
-        </th>
-        <td class="px-6 py-4">{{ venta.FechaVenta }}</td>
-        
-        <td class="px-6 py-4">{{ venta.CantidadVendida }}</td>
-
-        <td class="px-6 py-4">${{ venta.TotalVentas }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-<div class="graficas mt-10">
-  <h1 class="text-2xl font-bold mb-4 text-white">
-    Gráfico de productos con mas ganancias
-  </h1>
-  <div style="max-width: 80%; margin: auto">
-    <canvas id="graficoProductosMasGanancias" style="max-height: 800px"></canvas>
+<div class="relative">
+  <div class="absolute top-0 right-0 mt-9">
+    <a href="{{ url_for('download_table', format='pdf') }}" class="btn-download bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded mr-2 mb-2">Descargar como PDF</a>
+    <a href="{{ url_for('download_table', format='excel') }}" class="btn-download bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded mr-2 mb-2">Descargar como Excel</a>
+    <a href="{{ url_for('download_table', format='word') }}" class="btn-download bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded mr-2 mb-2">Descargar como Word</a>
   </div>
-</div>
 
+  <div class="overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+        Tabla de ventas
+        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+          Tabla con todas las ventas registradas con información detallada de cada una.
+        </p>
+      </caption>
+      <div class="block sm:hidden">
+        <div class="grid grid-cols-2 bg-gray-50 dark:bg-gray-700">
+          <div class="px-6 py-3 text-xs text-gray-700 uppercase">Producto</div>
+          <div class="px-6 py-3 text-xs text-gray-700 uppercase">Fecha de venta</div>
+          <div class="px-6 py-3 text-xs text-gray-700 uppercase">Cantidad vendida</div>
+          <div class="px-6 py-3 text-xs text-gray-700 uppercase">Ganancias totales de la venta</div>
+        </div>
+      </div>
+      <thead class="hidden sm:table-header-group text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">Producto</th>
+          <th scope="col" class="px-6 py-3">Fecha de venta</th>
+          <th scope="col" class="px-6 py-3">Cantidad vendida</th>
+          <th scope="col" class="px-6 py-3">Ganancias totales de la venta</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for venta in ventas %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 pagination">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 sm:whitespace-nowrap dark:text-white">
+              {{ venta.NombreProductoVendido }}
+            </th>
+            <td class="px-6 py-4">{{ venta.FechaVenta }}</td>
+            <td class="px-6 py-4">{{ venta.CantidadVendida }}</td>
+            <td class="px-6 py-4">${{ venta.TotalVentas }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-5 flex justify-end">
+    <button id="prevPage" class="mr-5 bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded">
+      <i class="bx bxs-chevrons-left"></i> Anterior
+    </button>
+    <button id="nextPage" class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded">
+      Siguiente <i class="bx bxs-chevrons-right"></i>
+    </button>
+  </div>
+  
+
+
+
+  <div class="graficas grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 ml-60">
+    <div class="w-full sm:w-96 mt-5">
+      <div class="graficas bg-white p-4 rounded-lg text-white mr-5">
+        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+          Gráfico de productos con más ganancias
+        </h1>
+        <div class="text-center">
+          <canvas id="graficoProductosMasGanancias" style="max-height: 400px"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full sm:w-96 mt-5">
+      <div class="graficas bg-white p-4 rounded-lg text-white ">
+        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+          Gráfico de fechas de ventas
+        </h1>
+        <div class="text-center">
+          <canvas id="graficoFechas" style="max-height: 400px"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="w-full sm:w-96 mt-5">
+      <div class="graficas bg-white p-4 rounded-lg text-white ml-5">
+        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+          Gráfico de productos más vendidos
+        </h1>
+        <div class="text-center">
+          <canvas id="graficoProductosMasVendido" style="max-height: 400px"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+<style>
+  body {
+    overflow:visible;
+  }
+</style>
 
 {%endblock%}
