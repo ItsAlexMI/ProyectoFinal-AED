@@ -1,6 +1,5 @@
 import sqlite3
 
-# Conectarse a la base de datos (si no existe, se creará)
 conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 
@@ -63,7 +62,6 @@ categorias = [
 for categoria in categorias:
     cursor.execute("INSERT INTO Categorias (NombreCategoria, Descripcion) VALUES (?, ?)", categoria)
 
-# Guardar los cambios y cerrar la conexión
 conn.commit()
 conn.close()
 

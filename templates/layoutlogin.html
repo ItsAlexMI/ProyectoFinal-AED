@@ -29,14 +29,45 @@
       type="module"
       src="{{ url_for('static', filename='js/login.js') }}"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('formularioRegistrar').addEventListener('submit', function(event) {
+              event.preventDefault();
+              
+             
+              fetch('/register', {
+                  method: 'POST',
+                  body: new FormData(this)
+              })
+              .then(response => response.json())
+              .then(response => {
+                  if (response.success) {
+                      Swal.fire({
+                          icon: 'success',
+                          title: '¡Éxito!',
+                          text: response.message
+                      }).then(() => {
+                          window.location.href = '/';
+                      });
+                  } else {
+                      Swal.fire({
+                          icon: 'error',
+                          title: '¡Error!',
+                          text: response.message
+                      });
+                  }
+              })
+              .catch(error => console.error('Error en la solicitud AJAX', error));
+          });
+      });
+  </script>
 <script>
-  // Bloquear la función de zoom
 document.addEventListener('gesturestart', function (e) {
   e.preventDefault();
 });
 
-// Otra forma de bloquear la función de zoom
 document.addEventListener('touchmove', function(event) {
   if (event.scale !== 1) { event.preventDefault(); }
 }, { passive: false });

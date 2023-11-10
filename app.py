@@ -21,7 +21,6 @@ db = SQL("sqlite:///database.db")
 
 
 def capturar_username():
-    # Obtén el ID del usuario actual desde la sesión
     user_id = session.get("user_id")
 
     user = db.execute("SELECT NombreUsuario FROM Usuarios WHERE id = ?", user_id)
@@ -31,7 +30,6 @@ def capturar_username():
     return username
 
 def capturar_correo():
-    # Obtén el ID del usuario actual desde la sesión
     user_id = session.get("user_id")
 
     user = db.execute("SELECT CorreoElectronico FROM Usuarios WHERE id = ?", user_id)
@@ -41,10 +39,8 @@ def capturar_correo():
     return correo
 
 def capturar_foto():
-    # Obtén el ID del usuario actual desde la sesión
     user_id = session.get("user_id")
 
-    # Consulta la URL de la imagen de perfil del usuario
     user = db.execute("SELECT UrlImagenPerfil FROM Usuarios WHERE id = ?", user_id)
 
     url_imagen_perfil = user[0]["UrlImagenPerfil"] if user else None
@@ -52,14 +48,12 @@ def capturar_foto():
 
     return url_imagen_perfil
 def actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion):
-    # Realiza una consulta SQL para actualizar el producto con el ID proporcionado
     db.execute("UPDATE Inventario SET CategoriaID = :CategoriaID, NombreProducto = :NombreProducto, Cantidad = :Cantidad, PrecioOriginal = :PrecioOriginal, PrecioVenta = :PrecioVenta, FechaActualizacion = :FechaActualizacion WHERE ProductoID = :producto_id",
                CategoriaID=CategoriaID, NombreProducto=NombreProducto, Cantidad=Cantidad, PrecioOriginal=PrecioOriginal, PrecioVenta=PrecioVenta, FechaActualizacion=FechaActualizacion, producto_id=producto_id)
 
 @app.route('/download_table/<format>', methods=['GET'])
 def download_table(format):
     if format == 'pdf':
-        # Generar un archivo PDF con información de la base de datos
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=letter)
         p.setFont("Helvetica", 12)
@@ -84,42 +78,34 @@ def download_table(format):
         buffer.seek(0)
         return send_file(buffer, as_attachment=True, download_name='tabla.pdf', mimetype='application/pdf') 
     elif format == 'excel':
-        # Generar datos en formato Excel
         user_id = session.get('user_id')
         ventas = db.execute("SELECT FechaVenta, NombreProductoVendido, TotalVentas, CantidadVendida FROM Ventas WHERE UsuarioID = ?", user_id)
         array = [['Producto', 'Fecha de venta', 'Cantidad vendida', 'Ganancias totales de la venta']]
         for venta in ventas:
             array.append([venta['NombreProductoVendido'], venta['FechaVenta'], venta['CantidadVendida'], venta['TotalVentas']])
 
-        # Guardar el archivo Excel en el servidor
         excel_file_path = 'tabla.xlsx'
         save_data(excel_file_path, {"Hoja 1": array})
 
-        # Servir el archivo como una respuesta
         return send_file(excel_file_path, as_attachment=True, download_name='tabla.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         return response
     elif format == 'word':
-        # Generar un archivo Word (docx)
         user_id = session.get('user_id')
         ventas = db.execute("SELECT FechaVenta, NombreProductoVendido, TotalVentas, CantidadVendida FROM Ventas WHERE UsuarioID = ?", user_id)
         
-        # Crear un documento de Word
         doc = Document()
         doc.add_heading('Tabla de Ventas', 0)
         
-        # Crear una tabla en el documento Word
         table = doc.add_table(rows=1, cols=4)
         table.style = 'Table Grid'
         table.autofit = False
         
-        # Definir encabezados de columna
         heading_cells = table.rows[0].cells
         heading_cells[0].text = 'Producto'
         heading_cells[1].text = 'Fecha de venta'
         heading_cells[2].text = 'Cantidad vendida'
         heading_cells[3].text = 'Ganancias totales de la venta'
         
-        # Llenar la tabla con los datos de la base de datos
         for venta in ventas:
             row_cells = table.add_row().cells
             row_cells[0].text = venta['NombreProductoVendido']
@@ -127,11 +113,9 @@ def download_table(format):
             row_cells[2].text = str(venta['CantidadVendida'])
             row_cells[3].text = str(venta['TotalVentas'])
         
-        # Guardar el archivo Word en el servidor
         word_file_path = 'tabla.docx'
         doc.save(word_file_path)
         
-        # Servir el archivo Word como una respuesta
         return send_file(word_file_path, as_attachment=True, download_name='tabla.docx', mimetype='application/msword')
 
     return "Formato no válido"
@@ -158,14 +142,12 @@ def productos_mas_vendidos():
     return jsonify(productos_mas_vendidos)
 
 def obtener_producto(producto_id):
-    # Realiza una consulta SQL para obtener el producto con el ID proporcionado
     producto = db.execute("SELECT * FROM Inventario WHERE ProductoID = :producto_id", producto_id=producto_id)
     
-    # Verifica si se encontró un producto
     if producto:
-        return producto[0]  # Devuelve el primer resultado (debería ser único por ID)
+        return producto[0] 
     else:
-        return None  # Devuelve None si no se encontró ningún producto con ese ID
+        return None 
 
 @app.route('/Stock', methods=['GET'])
 def obtenerStock():
@@ -173,10 +155,7 @@ def obtenerStock():
     user_id = session.get('user_id')
 
     resultados = db.execute("SELECT NombreProducto, Cantidad FROM Inventario WHERE UsuarioID = ? ORDER BY Cantidad DESC LIMIT 5", user_id)
-    # query = "SELECT NombreProducto, Cantidad FROM Inventario WHERE UsuarioID = ? ORDER BY Cantidad DESC LIMIT 5"
-    # resultados = db.execute(query, )
     
-    # Convierte los resultados en una lista de diccionarios
     productos_mas_vendidos = [{"NombreProducto": row["NombreProducto"], "Cantidad": row["Cantidad"]} for row in resultados]
     
     return jsonify(productos_mas_vendidos)
@@ -188,7 +167,6 @@ def obtenerGanancia():
 
     resultados = db.execute("SELECT NombreProductoVendido, SUM(TotalVentas) AS GananciasTotales FROM Ventas WHERE UsuarioID = ? GROUP BY NombreProductoVendido ORDER BY GananciasTotales DESC LIMIT 5", user_id)
 
-    # Convierte los resultados en una lista de diccionarios
     productos_mas_ganancias = [{"NombreProductoVendido": row["NombreProductoVendido"], "TotalVentas": row["GananciasTotales"]} for row in resultados]
 
     return jsonify(productos_mas_ganancias)
@@ -213,7 +191,6 @@ def index():
 
     
 
-    # Consultar los productos propios del usuario en sesión
     UsuarioID = session['user_id']
     productos_propios = db.execute("""
     SELECT 
@@ -286,7 +263,6 @@ def graficas():
     ganancias = obtenerGanancia()
     username = capturar_username()
     correo = capturar_correo()
-    # Consultar los productos propios del usuario en sesión
     UsuarioID = session['user_id']
     productos_propios = db.execute("""
     SELECT 
@@ -318,11 +294,8 @@ def editar_producto(producto_id):
     username = capturar_username()
     correo = capturar_correo()
     
-    # Obtener el producto basado en el ID
-    producto = obtener_producto(producto_id)  # Debes implementar esta función para obtener los detalles del producto
-
+    producto = obtener_producto(producto_id) 
     if request.method == "POST":
-        # Procesa los datos del formulario de edición y actualiza el producto en la base de datos
         CategoriaID = request.form.get("CategoriaID")
         NombreProducto = request.form.get("NombreProducto")
         Cantidad = request.form.get("Cantidad")
@@ -333,7 +306,6 @@ def editar_producto(producto_id):
         descripcion = request.form.get("descripcion")
 
 
-        # Actualiza el producto en la base de datos (debes implementar esta función)
         actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion)
         return redirect(url_for("index"))
     
@@ -342,7 +314,6 @@ def editar_producto(producto_id):
 @app.route("/eliminar-producto/<int:producto_id>")
 @login_required
 def eliminar_producto(producto_id):
-    # Elimina el producto de la base de datos (debes implementar esta función)
     db.execute("DELETE FROM Inventario WHERE ProductoID = ?", producto_id)
 
     return redirect(url_for("index"))
@@ -364,12 +335,12 @@ def login():
             flash("El usuario no existe")
             return redirect(url_for("login"))
 
-        user = users[0]  # Obtener el primer usuario de la lista
+        user = users[0]
 
         if check_password_hash(user["Contraseña"], password):
             print("Contraseña correcta")
             session["user_id"] = user["id"]
-            return redirect(url_for("index"))
+            return redirect(url_for("loading"))
         else:
             print("Contraseña incorrecta")
             flash("Contraseña incorrecta")
@@ -381,8 +352,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
-def register(): 
-
+def register():
     if request.method == "POST":
         name = request.form.get("nombre")
         email = request.form.get("email-register")
@@ -397,15 +367,13 @@ def register():
             flash("El usuario ya existe")
             return redirect(url_for("register"))
 
-
-
-
         db.execute("INSERT INTO Usuarios (NombreUsuario, CorreoElectronico, Contraseña) VALUES (?, ?, ?)", name, email, hashpass)
 
-        return redirect(url_for("index"))
+        # Devuelve un JSON para indicar el éxito del registro
+        return jsonify({"success": True, "message": "¡Usuario registrado con éxito!"})
 
+    # Aquí puedes redirigir a la página de inicio de sesión si el método no es POST
     return redirect("/login")
-
 
 @app.route("/logout")
 def logout():
@@ -424,7 +392,7 @@ def agregar_producto():
     if request.method == "POST":
         
         if 'user_id' not in session:
-            return redirect(url_for('login'))  # Redirige al inicio de sesión si el usuario no está autenticado
+            return redirect(url_for('login'))   
 
 
         
@@ -446,10 +414,10 @@ def agregar_producto():
     return render_template("agregarProducto.html", username=username, correo=correo , categorias=categorias, url_imagen_perfil=url_imagen_perfil)
 @app.route("/vender-producto", methods=["GET", "POST"])
 def vender_producto():
-
     url_imagen_perfil = capturar_foto()
     username = capturar_username()
     correo = capturar_correo()
+
     if request.method == "POST":
         if 'user_id' not in session:
             return redirect(url_for('login'))
@@ -466,24 +434,22 @@ def vender_producto():
             precio_venta = producto[0]["PrecioVenta"]
             cantidad_actual = producto[0]["Cantidad"]
 
-
             if CantidadVendida <= cantidad_actual:
-                # Calcular la ganancia total y actualizar la cantidad en la base de datos restando la cantidad vendida
                 ganancia_total = (precio_venta - precio_original) * CantidadVendida
                 nueva_cantidad = cantidad_actual - CantidadVendida
                 db.execute("UPDATE Inventario SET Cantidad = ? WHERE ProductoID = ? AND UsuarioID = ?", nueva_cantidad, ProductoID, UsuarioID)
 
-                # Registrar la venta en la tabla de ventas
                 db.execute("INSERT INTO Ventas (FechaVenta, UsuarioID, NombreProductoVendido, TotalVentas, CantidadVendida) VALUES (CURRENT_DATE, ?, ?, ?, ?)",
                            UsuarioID, nombre_producto, ganancia_total, CantidadVendida)
 
-                return "Producto vendido exitosamente"
+                # Devuelve un JSON para indicar el éxito de la venta
+                return jsonify({"success": True, "message": "¡Producto vendido con éxito!"})
             else:
-                flash("No hay suficiente cantidad en el inventario para vender.")
+                return jsonify({"error": True, "message": "No hay suficiente cantidad en el inventario para vender."})
         else:
-            flash("Producto no encontrado en el inventario.")
+            return jsonify({"error": True, "message": "No se encontró el producto."})
 
     UsuarioID = session['user_id']
     inventario = db.execute("SELECT ProductoID, NombreProducto FROM Inventario WHERE UsuarioID = ?", UsuarioID)
 
-    return render_template("venderProducto.html", username=username, correo=correo ,inventario=inventario, url_imagen_perfil=url_imagen_perfil)
+    return render_template("venderProducto.html", username=username, correo=correo, inventario=inventario, url_imagen_perfil=url_imagen_perfil)
