@@ -21,6 +21,15 @@
       rel="stylesheet"
     />
 
+    <script
+      type="module"
+      src="{{ url_for('static', filename='js/index.js') }}"
+    ></script>
+    <script
+    type="module"
+    src="{{ url_for('static', filename='js/graficas.js') }}"
+  ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
       body {
@@ -38,7 +47,7 @@
       .sidebar {
         transform: translateX(-100%);
         transition: transform 1.5s ease;
-        height: 1200px;
+        height: 1100px;
       }
       .sidebar.visible {
         transform: translateX(0);
@@ -212,6 +221,19 @@
                 >Estadísticas</a
               >
             </li>
+            
+            <li class="estadisticas text-white hover:bg-slate-600 mt-5 p-2">
+              <a
+                href="/dash"
+                class="bx bx-bar-chart icon"
+                style="font-size: 20px"
+              ></a>
+              <a
+                href="/dash"
+                class="text transition-opacity duration-300 ease-in-out hidden"
+                >Graficas</a
+              >
+            </li>
 
             <li
               class="text-white hover:bg-slate-600 mt-5 p-2 cursor-pointer"
@@ -272,362 +294,9 @@
         {% block content %} {% endblock %}
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('formulario').addEventListener('submit', function(event) {
-                event.preventDefault(); 
-                
-                fetch('/vender-producto', {
-                    method: 'POST',
-                    body: new FormData(this)
-                })
-                .then(response => response.json())
-                .then(response => {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: response.message
-                        });
-                    }
-                })
-                .catch(error => console.error('Error en la solicitud AJAX', error));
-            });
-        });
-    </script>
-
-    <script>
-      document
-        .getElementById("config-button")
-        .addEventListener("click", function () {
-          var configOptions = document.getElementById("config-options");
-
-          if (configOptions.classList.contains("hidden")) {
-            configOptions.classList.remove("hidden");
-          } else {
-            configOptions.classList.add("hidden");
-          }
-        });
-    </script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-          const sidebar = document.querySelector("#sidebar");
-          sidebar.classList.add("visible");
-        }, 1000);
-      });
-    </script>
-    <script>
-      const sidebar = document.getElementById("sidebar");
-      const toggleSidebar = document.getElementById("toggleSidebar");
-      const sidebarText = document.querySelectorAll(".text");
-      let sidebarExpanded = false;
-
-      toggleSidebar.addEventListener("click", () => {
-        sidebarExpanded = !sidebarExpanded;
-        if (sidebarExpanded) {
-          sidebar.classList.remove("w-16");
-          sidebar.classList.add("w-64");
-          sidebarText.forEach((item) => {
-            item.classList.remove("hidden");
-          });
-        } else {
-          sidebar.classList.remove("w-64");
-          sidebar.classList.add("w-16");
-          sidebarText.forEach((item) => {
-            item.classList.add("hidden");
-          });
-        }
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-          const navbar = document.querySelector(".navbar");
-          const sidebar = document.querySelector("#sidebar");
-          const configText = document.getElementById("config-text");
-
-          navbar.classList.add("visible");
-          sidebar.classList.add("visible");
-
-          const toggleSidebar = document.getElementById("toggleSidebar");
-          let sidebarExpanded = false;
-
-          toggleSidebar.addEventListener("click", () => {
-            sidebarExpanded = !sidebarExpanded;
-            if (sidebarExpanded) {
-              sidebar.classList.remove("w-16");
-              sidebar.classList.add("w-64");
-              sidebarText.forEach((item) => {
-                item.classList.remove("hidden");
-              });
-              configText.classList.remove("hidden");
-            } else {
-              sidebar.classList.remove("w-64");
-              sidebar.classList.add("w-16");
-              sidebarText.forEach((item) => {
-                item.classList.add("hidden");
-              });
-              configText.classList.add("hidden");
-            }
-          });
-        }, 1000);
-      });
-    </script>
-    <script>
-      const toggleButtons = document.getElementById("toggleButtons");
-      const buttonDropdown = document.getElementById("buttonDropdown");
-
-      toggleButtons.addEventListener("click", () => {
-        buttonDropdown.classList.toggle("hidden");
-      });
-    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      $(document).ready(function () {
-        $.ajax({
-          url: "/Stock",
-          method: "GET",
-          success: function (data) {
-            var nombresProductos = data.map(function (producto) {
-              return producto.NombreProducto;
-            });
 
-            var cantidadesProductos = data.map(function (producto) {
-              return producto.Cantidad;
-            });
-            var barColors = [
-              "#b91d47",
-              "#00aba9",
-              "#2b5797",
-              "#e8c3b9",
-              "#1e7145",
-            ];
-            var ctx = document
-              .getElementById("graficoProductosMasVendidos")
-              .getContext("2d");
-            var chart = new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: nombresProductos,
-                datasets: [
-                  {
-                    label: "Cantidades en stock",
-                    data: cantidadesProductos,
-                    backgroundColor: barColors,
-                    borderColor: "rgba(75, 192, 192, 1)",
-                    borderWidth: 1,
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                  },
-                },
-              },
-            });
-          },
-          error: function (error) {
-            console.error("Error al cargar datos: " + error);
-          },
-        });
-      });
-    </script>
-
-    <script>
-      $(document).ready(function () {
-        $.ajax({
-          url: "/Ganancias",
-          method: "GET",
-          success: function (data) {
-            var nombreProducto = data.map(function (producto) {
-              return producto.NombreProductoVendido;
-            });
-
-            var totalVentas = data.map(function (producto) {
-              return producto.TotalVentas;
-            });
-
-            var ctx = document
-              .getElementById("graficoProductosMasGanancias")
-              .getContext("2d");
-            var chart = new Chart(ctx, {
-              type: "doughnut",
-              data: {
-                labels: nombreProducto,
-                datasets: [
-                  {
-                    data: totalVentas,
-                    backgroundColor: [
-                      "#b91d47",
-                      "#00aba9",
-                      "#2b5797",
-                      "#e8c3b9",
-                      "#1e7145",
-                    ],
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-              },
-            });
-          },
-          error: function (error) {
-            console.error("Error al cargar datos: " + error);
-          },
-        });
-      });
-    </script>
-
-    <script>
-      $(document).ready(function () {
-        $.ajax({
-          url: "/ProductoMasVendido",
-          method: "GET",
-          success: function (data) {
-            var nombreProducto = data.map(function (producto) {
-              return producto.NombreProductoVendido;
-            });
-
-            var totalCantidad = data.map(function (producto) {
-              return producto.CantidadVendida;
-            });
-
-            var ctx = document
-              .getElementById("graficoProductosMasVendido")
-              .getContext("2d");
-            var chart = new Chart(ctx, {
-              type: "doughnut",
-              data: {
-                labels: nombreProducto,
-                datasets: [
-                  {
-                    data: totalCantidad,
-                    backgroundColor: [
-                      "#b91d47",
-                      "#00aba9",
-                      "#2b5797",
-                      "#e8c3b9",
-                      "#1e7145",
-                    ],
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-              },
-            });
-          },
-          error: function (error) {
-            console.error("Error al cargar datos: " + error);
-          },
-        });
-      });
-    </script>
-
-    <script>
-      $(document).ready(function () {
-        $.ajax({
-          url: "/Fechas",
-          method: "GET",
-          success: function (data) {
-            var nombreProducto = data.map(function (producto) {
-              return new Date(producto.FechaVenta).toLocaleDateString();
-            });
-
-            var totalFechas = data.map(function (producto) {
-              return producto.CantidadVendida;
-            });
-
-            var ctx = document.getElementById("graficoFechas").getContext("2d");
-            var chart = new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: nombreProducto,
-                datasets: [
-                  {
-                    data: totalFechas,
-                    backgroundColor: [
-                      "#b91d47",
-                      "#00aba9",
-                      "#2b5797",
-                      "#e8c3b9",
-                      "#1e7145",
-                    ],
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-              },
-            });
-
-            chart.options.plugins.legend.display = false;
-            chart.update();
-          },
-          error: function (error) {
-            console.error("Error al cargar datos: " + error);
-          },
-        });
-      });
-    </script>
-
-    <script>
-      const prevPageButton = document.getElementById("prevPage");
-      const nextPageButton = document.getElementById("nextPage");
-      const itemsPerPage = 10;
-      let currentPage = 1;
-
-      function showPage(page) {
-        const rows = document.querySelectorAll(".pagination");
-        const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = page * itemsPerPage;
-
-        rows.forEach((row, index) => {
-          if (index >= startIndex && index < endIndex) {
-            row.style.display = "table-row";
-          } else {
-            row.style.display = "none";
-          }
-        });
-      }
-
-      prevPageButton.addEventListener("click", () => {
-        if (currentPage > 1) {
-          currentPage--;
-          showPage(currentPage);
-        }
-      });
-
-      nextPageButton.addEventListener("click", () => {
-        const totalRows = document.querySelectorAll(".pagination").length;
-        const totalPages = Math.ceil(totalRows / itemsPerPage);
-        if (currentPage < totalPages) {
-          currentPage++;
-          showPage(currentPage);
-        }
-      });
-
-      showPage(currentPage);
-    </script>
   </body>
 </html>

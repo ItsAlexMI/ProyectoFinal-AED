@@ -256,6 +256,41 @@ def cambiar_datos():
 
 
 
+#mezclar el index con graficas
+@app.route("/dash")
+@login_required
+def dash():
+    url_imagen_perfil = capturar_foto()
+    username = capturar_username()
+    correo = capturar_correo()
+    productos_mas_vendidos = obtenerStock()
+    UsuarioID = session['user_id']
+    productos_propios = db.execute("""
+    SELECT 
+        I.ProductoID,
+        I.NombreProducto, 
+        I.Cantidad, 
+        I.FechaActualizacion, 
+        I.PrecioOriginal, 
+        I.PrecioVenta, 
+        C.NombreCategoria, 
+        C.Descripcion 
+    FROM Inventario AS I
+    LEFT JOIN Categorias AS C ON I.CategoriaID = C.ID
+    WHERE I.UsuarioID = ?
+    """, UsuarioID)
+
+    gananciasTotales = db.execute("SELECT SUM(TotalVentas) AS GananciaTotal FROM Ventas WHERE UsuarioID = ?", UsuarioID)
+    cantidadProductos = db.execute("SELECT COUNT(*) AS Cantidad FROM Inventario WHERE UsuarioID = ?", UsuarioID)
+    ventasTotales =  db.execute("SELECT count(*) AS CantidadVendida FROM Ventas WHERE UsuarioID = ?", UsuarioID)
+    ventas = db.execute("SELECT FechaVenta, NombreProductoVendido, TotalVentas, CantidadVendida FROM Ventas WHERE UsuarioID = ?", UsuarioID)
+
+
+    if productos_mas_vendidos is not None:
+        return render_template('dash.html', correo=correo ,productos_mas_vendidos=productos_mas_vendidos, url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales, cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username = username, ventas = ventas)
+        return render_template('dash.html', correo=correo , url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales , cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username=username, ventas = ventas)
+ 
+
 @app.route("/graficas")
 @login_required
 def graficas():
