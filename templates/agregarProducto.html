@@ -7,7 +7,7 @@ Agregar producto
 {%block content%}
 <h1 class="text-2xl font-bold mb-4 text-white">Agregar producto</h1>
 
-<form action="/agregar-producto" method="POST" class="bg-white p-6 rounded shadow-sm">
+<form action="{{ url_for('agregar_producto') }}" method="post" enctype="multipart/form-data" class="bg-white p-6 rounded shadow-sm">
     <label for="CategoriaID" class="block text-gray-700 font-medium mb-2">Categoría:</label>
     <select name="CategoriaID" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500">
         {% for categoria in categorias %}
@@ -30,6 +30,8 @@ Agregar producto
     <label for="FechaActualizacion" class="block text-gray-700 font-medium mt-4 mb-2">Fecha de Actualización:</label>
     <input type="date" name="FechaActualizacion" id="FechaActualizacion" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-1">
     
+    <label for="imagen" class="block text-gray-700 font-medium mt-4 mb-2">Imagen:</label>
+    <input type="file" required name="imagen_producto" class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-1">
     
     <input type="submit" value="Agregar Producto" class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded mt-10">
 </form>

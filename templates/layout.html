@@ -47,7 +47,7 @@
       .sidebar {
         transform: translateX(-100%);
         transition: transform 1.5s ease;
-        height: 1500px;
+        height: 1930px;
       }
       .sidebar.visible {
         transform: translateX(0);
@@ -96,9 +96,15 @@
     >
       <div class="flex justify-between items-center">
         <div class="flex items-center">
-          <span class="text-xl font-semibold">Mi Dashboard</span>
+          <span class="text-xl font-bold">Mi Dashboard</span>
         </div>
+
+      
         <div class="flex items-center">
+          <form class="flex items-center mr-4 " action="/buscar-productos" method="GET">
+            <input type="text" name="query" class="mr-2 p-2 rounded h-10 w-60   text-black" placeholder="Buscar productos...">
+            <button class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded h-10" type="submit">Buscar</button>
+        </form>
           <div
             id="toggleButtons"
             class="text-white cursor-pointer hover:bg-slate-600 p-2"

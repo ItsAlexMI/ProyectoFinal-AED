@@ -69,6 +69,8 @@ content%}
 
 
   </div>
+
+
 </div>
 
 
@@ -79,6 +81,7 @@ content%}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {% for producto in productos_propios %}
       <div class="bg-white p-4 rounded-lg shadow-md">
+        <img src="{{ url_for('static', filename=producto.Imagen.replace('static/', '')) }}" alt="Imagen del producto" class="w-full h-auto mb-4">
         <h3 class="text-lg font-semibold text-center">
           {{ producto.NombreProducto }}
         </h3>
@@ -104,11 +107,8 @@ content%}
             >Editar</a
           >
     
-          <a
-            href="/eliminar-producto/{{ producto.ProductoID }}"
-            class="ml-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-950 hover:border-red-800 rounded mt-10"
-            >Eliminar</a
-          >
+          <a href="#" class="ml-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-950 hover:border-red-800 rounded mt-10 delete-product" data-productid="{{ producto.ProductoID }}">Eliminar</a>
+
         </div>
       </div>
       {% endfor %}
@@ -125,8 +125,6 @@ content%}
     </div>
   </div>
 </div>
-
-
 
 {% endblock %}
 

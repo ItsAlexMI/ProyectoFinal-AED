@@ -190,7 +190,7 @@ content%}
   <div class="w-full sm:w-96 mt-5">
     <div class="graficas bg-white p-4 rounded-lg text-white ml-5">
       <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
-        Gráfico de productos más vendidos 
+        Gráfico de productos más vendidos
       </h1>
       <div class="text-center">
         <canvas
@@ -238,7 +238,7 @@ content%}
       </div>
     </div>
   </div>
-  <div class="col-span-1 w-full sm:w-full mt-5 ">
+  <div class="col-span-1 w-full sm:w-full mt-5">
     <div class="graficas bg-white p-4 rounded-lg text-white h-96 w-full">
       <h1 class="text-2xl font-bold mb-4 text-black whitespace-no-wrap">
         Gráfico de productos con mas ventas
@@ -264,9 +264,37 @@ content%}
         ></canvas>
       </div>
     </div>
+  </div>
 </div>
+<div class="grid grid-cols-2 gap-4">
+  <div class="col-span-1 w-full sm:w-full mt-5">
+
+      <div class="graficas bg-white p-4 rounded-lg text-white mr-5 w-full">
+        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+          Gráfico de productos con más ganancias (POLAR)
+        </h1>
+        <div class="text-center">
+          <canvas
+            id="graficoProductosMasGananciasPolar"
+            style="max-height: 400px"
+          ></canvas>
+        </div>
+      </div>
+
+  </div>
+  <div class="col-span-1 w-full sm:w-full mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white mr-5 w-full">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos con más ganancias (POLAR)
+      </h1>
+      <div class="text-center">
+        <canvas
+          id="graficoProductosMasVendidoPolar"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
 </div>
-
-
 
 {%endblock%}

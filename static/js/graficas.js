@@ -456,3 +456,95 @@ $(document).ready(function () {
       },
     });
   });
+
+  
+  $(document).ready(function () {
+    $.ajax({
+      url: "/Ganancias",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalVentas = data.map(function (producto) {
+          return producto.TotalVentas;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasGananciasPolar")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "polarArea",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalVentas,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });
+
+  $(document).ready(function () {
+    $.ajax({
+      url: "/ProductoMasVendido",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalCantidad = data.map(function (producto) {
+          return producto.CantidadVendida;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasVendidoPolar")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "polarArea",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalCantidad,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+            ],
+          },
+          options: {
+            
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });

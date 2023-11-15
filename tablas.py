@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS Inventario  (
     PrecioOriginal DECIMAL(10, 2) NOT NULL,
     PrecioVenta DECIMAL(10, 2) NOT NULL,
     FechaActualizacion DATE,
+    Imagen TEXT,
     FOREIGN KEY (UsuarioID) REFERENCES Usuarios(ID),
     FOREIGN KEY (CategoriaID) REFERENCES Categorias(ID)
 )

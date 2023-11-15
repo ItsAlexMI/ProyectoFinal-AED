@@ -1,3 +1,29 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const deleteLinks = document.querySelectorAll('.delete-product');
+
+  deleteLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+          event.preventDefault();
+          const productId = link.getAttribute('data-productid');
+
+          Swal.fire({
+              title: "¿Estás seguro?",
+              text: "Una vez eliminado, no podrás recuperar este producto.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Sí, eliminar',
+              cancelButtonText: 'Cancelar'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.location.href = `/eliminar-producto/${productId}`;
+              }
+          });
+      });
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("formulario")
@@ -143,3 +169,5 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   showPage(currentPage);
+
+  

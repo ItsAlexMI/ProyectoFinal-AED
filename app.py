@@ -11,6 +11,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from docx import Document
 from pyexcel_xlsx import save_data
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -18,7 +19,12 @@ app.config['DEBUG'] = True
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 db = SQL("sqlite:///database.db")
+app.config['PRODUCT_IMAGES_FOLDER'] = 'static/product_images/'
+app.config['USER_IMAGES_FOLDER'] = 'static/user_images/'
 
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def capturar_username():
     user_id = session.get("user_id")
@@ -47,9 +53,9 @@ def capturar_foto():
 
 
     return url_imagen_perfil
-def actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion):
-    db.execute("UPDATE Inventario SET CategoriaID = :CategoriaID, NombreProducto = :NombreProducto, Cantidad = :Cantidad, PrecioOriginal = :PrecioOriginal, PrecioVenta = :PrecioVenta, FechaActualizacion = :FechaActualizacion WHERE ProductoID = :producto_id",
-               CategoriaID=CategoriaID, NombreProducto=NombreProducto, Cantidad=Cantidad, PrecioOriginal=PrecioOriginal, PrecioVenta=PrecioVenta, FechaActualizacion=FechaActualizacion, producto_id=producto_id)
+def actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion, Imagen):
+    db.execute("UPDATE Inventario SET CategoriaID = :CategoriaID, NombreProducto = :NombreProducto, Cantidad = :Cantidad, PrecioOriginal = :PrecioOriginal, PrecioVenta = :PrecioVenta, FechaActualizacion = :FechaActualizacion, Imagen = :Imagen WHERE ProductoID = :producto_id",
+               CategoriaID=CategoriaID, NombreProducto=NombreProducto, Cantidad=Cantidad, PrecioOriginal=PrecioOriginal, PrecioVenta=PrecioVenta, FechaActualizacion=FechaActualizacion, producto_id=producto_id, Imagen=Imagen)
 
 @app.route('/download_table/<format>', methods=['GET'])
 def download_table(format):
@@ -200,6 +206,7 @@ def index():
         I.FechaActualizacion, 
         I.PrecioOriginal, 
         I.PrecioVenta, 
+        I.Imagen,
         C.NombreCategoria, 
         C.Descripcion 
     FROM Inventario AS I
@@ -220,17 +227,27 @@ def index():
 @app.route("/cambiar-foto", methods=["GET", "POST"])
 @login_required
 def cambiar_foto():
-    url_imagen_perfil = capturar_foto()
     username = capturar_username()
     correo = capturar_correo()
+    url_imagen_perfil = capturar_foto()
+
     if request.method == "POST":
-        url_imagen_perfil = request.form.get("url_imagen_perfil")
-        db.execute("UPDATE Usuarios SET UrlImagenPerfil = ? WHERE id = ?", url_imagen_perfil, session['user_id'])
-        return redirect(url_for("index"))
+        imagen_perfil = request.files['imagen_perfil']
 
+        if imagen_perfil.filename != '':
+            # Guardar la imagen en una carpeta específica
+            if imagen_perfil and allowed_file(imagen_perfil.filename):
+                filename = secure_filename(imagen_perfil.filename)
+                if not os.path.exists(app.config['USER_IMAGES_FOLDER']):
+                    os.makedirs(app.config['USER_IMAGES_FOLDER'])
+                imagen_perfil.save(os.path.join(app.config['USER_IMAGES_FOLDER'], filename))
+                url_imagen_perfil = os.path.join(app.config['USER_IMAGES_FOLDER'], filename)
 
-    return render_template('cambiarFoto.html', url_imagen_perfil=url_imagen_perfil, username = username, correo = correo)
+                # Actualizar la URL de la imagen de perfil en la base de datos
+                db.execute("UPDATE Usuarios SET UrlImagenPerfil = ? WHERE id = ?", url_imagen_perfil, session['user_id'])
+                return redirect(url_for("index"))
 
+    return render_template('cambiarFoto.html', url_imagen_perfil=url_imagen_perfil, username=username, correo=correo)
 @app.route("/cambiar-datos", methods=["GET", "POST"])
 @login_required
 def cambiar_datos():
@@ -335,7 +352,7 @@ def editar_producto(producto_id):
     username = capturar_username()
     correo = capturar_correo()
     
-    producto = obtener_producto(producto_id) 
+    producto = obtener_producto(producto_id)
     if request.method == "POST":
         CategoriaID = request.form.get("CategoriaID")
         NombreProducto = request.form.get("NombreProducto")
@@ -346,11 +363,49 @@ def editar_producto(producto_id):
         categoria = request.form.get("categoria")
         descripcion = request.form.get("descripcion")
 
+        imagen = request.files['imagen_producto']
 
-        actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion)
+        if imagen.filename != '':
+            if imagen and allowed_file(imagen.filename):
+                filename = secure_filename(imagen.filename)
+                if not os.path.exists(app.config['PRODUCT_IMAGES_FOLDER']):
+                    os.makedirs(app.config['PRODUCT_IMAGES_FOLDER'])
+                imagen.save(os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename))
+                url_imagen_producto = os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename)
+
+                # Actualizar la URL de la imagen en la base de datos
+                actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion, url_imagen_producto)
+            else:
+                flash('Formato de imagen no válido. Sube imágenes en formato PNG, JPG, JPEG o GIF.')
+
+        else:
+            # Si no se selecciona una nueva imagen, mantener la imagen existente en la base de datos
+            url_imagen_producto = producto['Imagen']
+            actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion)
+
         return redirect(url_for("index"))
     
     return render_template("editarProducto.html", username=username, correo=correo , categorias=categorias, producto=producto, url_imagen_perfil=url_imagen_perfil)
+    
+@app.route("/buscar-productos", methods=["GET"])
+@login_required
+def buscar_productos():
+    
+    url_imagen_perfil = capturar_foto()
+    username = capturar_username()
+    correo = capturar_correo()
+    query = request.args.get("query")
+
+    # Realiza la búsqueda de productos por nombre en la base de datos
+    if query:
+        # Aquí utilizamos una consulta SQL para buscar productos por su nombre
+        productos_encontrados = db.execute(
+            "SELECT * FROM Inventario WHERE NombreProducto LIKE ?", f"%{query}%"
+        )
+    else:
+        productos_encontrados = []
+
+    return render_template("resultados_busqueda.html", productos=productos_encontrados, query=query, url_imagen_perfil=url_imagen_perfil, username=username, correo=correo)
 
 @app.route("/eliminar-producto/<int:producto_id>")
 @login_required
@@ -425,18 +480,15 @@ def logout():
 @app.route("/agregar-producto", methods=["GET", "POST"])
 @login_required
 def agregar_producto():
-
     url_imagen_perfil = capturar_foto()
     username = capturar_username()
     correo = capturar_correo()
     categorias = db.execute("SELECT ID, NombreCategoria FROM Categorias")
+    
     if request.method == "POST":
-        
         if 'user_id' not in session:
-            return redirect(url_for('login'))   
+            return redirect(url_for('login'))
 
-
-        
         UsuarioID = session['user_id']
         CategoriaID = request.form.get("CategoriaID")
         NombreProducto = request.form.get("NombreProducto")
@@ -444,15 +496,25 @@ def agregar_producto():
         PrecioOriginal = request.form.get("PrecioOriginal")
         PrecioVenta = request.form.get("PrecioVenta")
         FechaActualizacion = request.form.get("FechaActualizacion")
+        
+        imagen = request.files.get('imagen_producto')  
 
-        db.execute("INSERT INTO Inventario (UsuarioID, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                       UsuarioID, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion)
+        if imagen and allowed_file(imagen.filename):
+            filename = secure_filename(imagen.filename)
+            if not os.path.exists(app.config['PRODUCT_IMAGES_FOLDER']):
+                os.makedirs(app.config['PRODUCT_IMAGES_FOLDER'])
+            imagen.save(os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename))
+            url_imagen_producto = os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename)
 
 
+            db.execute("INSERT INTO Inventario (UsuarioID, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion, Imagen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                       UsuarioID, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion, url_imagen_producto)
 
-        return redirect(url_for("index"))
-    
-    return render_template("agregarProducto.html", username=username, correo=correo , categorias=categorias, url_imagen_perfil=url_imagen_perfil)
+            return redirect(url_for("index"))
+        elif imagen:
+            flash('Formato de imagen no válido. Sube imágenes en formato PNG, JPG, JPEG o GIF.')
+
+    return render_template("agregarProducto.html", username=username, correo=correo, categorias=categorias, url_imagen_perfil=url_imagen_perfil)
 @app.route("/vender-producto", methods=["GET", "POST"])
 def vender_producto():
     url_imagen_perfil = capturar_foto()

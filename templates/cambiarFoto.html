@@ -1,15 +1,15 @@
-{%extends 'layout.html'%}
+{% extends 'layout.html' %}
 
-{%block title%} Cambiar foto de perfil {%endblock%}
+{% block title %} Cambiar foto de perfil {% endblock %}
 
-{%block content%}
+{% block content %}
 <h1 class="text-2xl font-bold mb-4 text-white">Cambiar foto de perfil</h1>
 
-<form action="/cambiar-foto" class="bg-white p-6 rounded shadow-sm" method="POST">
-    <label class="block text-gray-700 font-medium mb-2" for="url_imagen_perfil">URL de la imagen:</label>
-    <input class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-10" type="text" name="url_imagen_perfil" required><br><br>
+<form action="/cambiar-foto" class="bg-white p-6 rounded shadow-sm" method="POST" enctype="multipart/form-data">
+    <label class="block text-gray-700 font-medium mb-2" for="imagen_perfil">Seleccionar imagen:</label>
+    <input class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-10" type="file" name="imagen_perfil" required><br><br>
 
     <input type="submit" value="Cambiar imagen de perfil" class="bg-slate-500 hover:bg-slate-400 text-white font-bold py-2 px-4 border-b-4 border-slate-700 hover:border-slate-500 rounded mt-10">
 </form>
 
-{%endblock%}
+{% endblock %}

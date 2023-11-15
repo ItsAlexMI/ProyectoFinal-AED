@@ -8,8 +8,7 @@ Editar Producto
 
 <h1 class="text-2xl font-bold mb-4 text-white">Editar Producto</h1>
 
-<form action="/editar-producto/{{ producto.ProductoID }}" class="bg-white p-6 rounded shadow-sm" method="POST">
-    
+<form action="/editar-producto/{{ producto.ProductoID }}" class="bg-white p-6 rounded shadow-sm" method="POST" enctype="multipart/form-data">    
     <input type="hidden" name="CategoriaID" value="{{ producto.CategoriaID }}">
 
     <label class="block text-gray-700 font-medium mb-2" for="NombreProducto">Nombre del Producto:</label>
@@ -26,6 +25,9 @@ Editar Producto
 
     <label for="FechaActualizacion" class="block text-gray-700 font-medium mt-4 mb-2">Fecha de Actualización:</label>
     <input type="date" name="FechaActualizacion" id="FechaActualizacion" required class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-1">
+
+    <label for="imagen" class="block text-gray-700 font-medium mt-4 mb-2">Imagen:</label>
+    <input type="file" required name="imagen_producto" class="w-full py-2 px-3 rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-1">
 
     <input type="hidden" name="categoria" value="{{ producto.NombreCategoria }}">
     <input type="hidden" name="descripcion" value="{{ producto.Descripcion }}">
