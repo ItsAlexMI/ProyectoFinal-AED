@@ -263,7 +263,7 @@ def dash():
     url_imagen_perfil = capturar_foto()
     username = capturar_username()
     correo = capturar_correo()
-    productos_mas_vendidos = obtenerStock()
+    # productos_mas_vendidos = obtenerStock()
     UsuarioID = session['user_id']
     productos_propios = db.execute("""
     SELECT 
@@ -280,15 +280,21 @@ def dash():
     WHERE I.UsuarioID = ?
     """, UsuarioID)
 
+    stock = db.execute("SELECT Cantidad AS Stock FROM Inventario WHERE UsuarioID = ? ORDER BY Cantidad DESC LIMIT 1", UsuarioID)
+    producto_mas_ganancias = db.execute("SELECT NombreProductoVendido AS ProductoTop FROM Ventas WHERE UsuarioID = ? ORDER BY TotalVentas DESC LIMIT 1", UsuarioID)
+    productos_mas_vendidos = db.execute("SELECT NombreProductoVendido AS Producto FROM Ventas WHERE UsuarioID = ? ORDER BY CantidadVendida DESC LIMIT 1", UsuarioID)    
+    producto_menos_vendido = db.execute("SELECT NombreProductoVendido AS ProductoMV FROM Ventas WHERE UsuarioID = ? ORDER BY CantidadVendida ASC LIMIT 1", UsuarioID)
+    producto_menos_ganancia = db.execute("SELECT NombreProductoVendido AS ProductoMG FROM Ventas WHERE UsuarioID = ? ORDER BY TotalVentas ASC LIMIT 1", UsuarioID)
     gananciasTotales = db.execute("SELECT SUM(TotalVentas) AS GananciaTotal FROM Ventas WHERE UsuarioID = ?", UsuarioID)
     cantidadProductos = db.execute("SELECT COUNT(*) AS Cantidad FROM Inventario WHERE UsuarioID = ?", UsuarioID)
     ventasTotales =  db.execute("SELECT count(*) AS CantidadVendida FROM Ventas WHERE UsuarioID = ?", UsuarioID)
     ventas = db.execute("SELECT FechaVenta, NombreProductoVendido, TotalVentas, CantidadVendida FROM Ventas WHERE UsuarioID = ?", UsuarioID)
 
 
+
     if productos_mas_vendidos is not None:
-        return render_template('dash.html', correo=correo ,productos_mas_vendidos=productos_mas_vendidos, url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales, cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username = username, ventas = ventas)
-        return render_template('dash.html', correo=correo , url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales , cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username=username, ventas = ventas)
+        return render_template('dash.html', correo=correo ,productos_mas_vendidos=productos_mas_vendidos, url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales, cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username = username, ventas = ventas, producto_mas_ganancias=producto_mas_ganancias, stock = stock, producto_menos_vendido=producto_menos_vendido, producto_menos_ganancia=producto_menos_ganancia)
+        return render_template('dash.html', correo=correo , url_imagen_perfil=url_imagen_perfil, productos_propios=productos_propios, gananciasTotales=gananciasTotales , cantidadProductos=cantidadProductos, ventasTotales=ventasTotales, username=username, ventas = ventas , producto_mas_ganancia=producto_mas_ganancia, stock = stock, producto_menos_vendido=producto_menos_vendido, producto_menos_ganancia=producto_menos_ganancia)
  
 
 @app.route("/graficas")

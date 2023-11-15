@@ -11,11 +11,11 @@ $(document).ready(function () {
           return producto.Cantidad;
         });
         var barColors = [
-          "#b91d47",
-          "#00aba9",
-          "#2b5797",
-          "#e8c3b9",
-          "#1e7145",
+          "#0284c7",
+          "#4f46e5",
+          "#7c3aed",
+          "#db2777",
+          "#e11d48",
         ];
         var ctx = document
           .getElementById("graficoProductosMasVendidos")
@@ -75,11 +75,56 @@ $(document).ready(function () {
               {
                 data: totalVentas,
                 backgroundColor: [
-                  "#b91d47",
-                  "#00aba9",
-                  "#2b5797",
-                  "#e8c3b9",
-                  "#1e7145",
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });
+
+  $(document).ready(function () {
+    $.ajax({
+      url: "/Ganancias",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalVentas = data.map(function (producto) {
+          return producto.TotalVentas;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasGananciasPie")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalVentas,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
                 ],
               },
             ],
@@ -120,16 +165,136 @@ $(document).ready(function () {
               {
                 data: totalCantidad,
                 backgroundColor: [
-                  "#b91d47",
-                  "#00aba9",
-                  "#2b5797",
-                  "#e8c3b9",
-                  "#1e7145",
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
                 ],
               },
             ],
           },
           options: {
+            
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });
+  $(document).ready(function () {
+    $.ajax({
+      url: "/ProductoMasVendido",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalCantidad = data.map(function (producto) {
+          return producto.CantidadVendida;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasVendidoBar")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalCantidad,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+              {
+                label: 'Linea de crecimiento',
+                type : 'line',
+                data : totalCantidad,
+                fill: false,
+                borderColor: '#16a34a',
+                borderWidth: 2,
+
+                pointBackgroundColor: "#16a34a", // Color de los puntos
+              }
+            ],
+          },
+          options: {
+            animations: {
+              tension: {
+                duration: 1000,
+                easing: 'linear',
+                from: 1,
+                to: 0,
+                loop: true
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                position: 'top',
+                offset: true,
+                offsetAmount: 10,
+              }
+            }
+          },
+        }); 
+        chart.options.plugins.legend.display = false;
+        chart.update();
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });
+
+  $(document).ready(function () {
+    $.ajax({
+      url: "/ProductoMasVendido",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalCantidad = data.map(function (producto) {
+          return producto.CantidadVendida;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasVendidoPie")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalCantidad,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+            ],
+          },
+          options: {
+            
             responsive: true,
             maintainAspectRatio: false,
           },
@@ -161,23 +326,128 @@ $(document).ready(function () {
             labels: nombreProducto,
             datasets: [
               {
+                label: 'Cantidad Vendida',
                 data: totalFechas,
                 backgroundColor: [
-                  "#b91d47",
-                  "#00aba9",
-                  "#2b5797",
-                  "#e8c3b9",
-                  "#1e7145",
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
                 ],
+                
+                borderWidth: 2,
+              },
+              {
+                label: 'Linea de crecimiento',
+                type: 'line',
+                data: totalFechas,
+                fill: false,
+                borderColor: '#16a34a',
+                borderWidth: 2,
+
+                pointBackgroundColor: "#16a34a", // Color de los puntos
               },
             ],
           },
           options: {
+            animations: {
+              tension: {
+                duration: 1000,
+                easing: 'linear',
+                from: 1,
+                to: 0,
+                loop: true
+              }
+            },
             responsive: true,
             maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                position: 'top',
+                offset: true,
+                offsetAmount: 10,
+              }
+            }
           },
         });
+        
 
+        chart.options.plugins.legend.display = false;
+        chart.update();
+      },
+      error: function (error) {
+        console.error("Error al cargar datos: " + error);
+      },
+    });
+  });
+
+  $(document).ready(function () {
+    $.ajax({
+      url: "/Ganancias",
+      method: "GET",
+      success: function (data) {
+        var nombreProducto = data.map(function (producto) {
+          return producto.NombreProductoVendido;
+        });
+
+        var totalVentas = data.map(function (producto) {
+          return producto.TotalVentas;
+        });
+
+        var ctx = document
+          .getElementById("graficoProductosMasGananciasBar")
+          .getContext("2d");
+        var chart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: nombreProducto,
+            datasets: [
+              {
+                data: totalVentas,
+                backgroundColor: [
+                  "#0284c7",
+                  "#4f46e5",
+                  "#7c3aed",
+                  "#db2777",
+                  "#e11d48",
+                ],
+              },
+              {
+                label: 'Linea de crecimiento',
+                type: 'line',
+                data: totalVentas,
+                fill: false,
+                borderColor: '#16a34a',
+                borderWidth: 2,
+
+                pointBackgroundColor: "#16a34a", // Color de los puntos
+              }
+            ],
+          },
+          options: {
+            animations: {
+              tension: {
+                duration: 1000,
+                easing: 'linear',
+                from: 1,
+                to: 0,
+                loop: true
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                position: 'top',
+                offset: true,
+                offsetAmount: 10,
+              }
+            }
+          },
+        }); 
         chart.options.plugins.legend.display = false;
         chart.update();
       },

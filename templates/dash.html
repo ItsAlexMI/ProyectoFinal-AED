@@ -1,102 +1,272 @@
 {%extends 'layout.html'%} {%block title%} Dashboard {%endblock%} {%block
-    content%}
+content%}
 
-    <div class="p-4 rounded-lg shadow-md datos">
-        <div class="flex items-center">
-      
-          <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
-            <i class="bx bxs-dashboard text-2xl ml-4" style="color: white"></i>
-            {%for cantidad in cantidadProductos%}
-              <div class="my-2">
-                {% if cantidad.Cantidad %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Cantidad de productos: {{ cantidad.Cantidad }}
-                  </h1>
-                {% else %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Cantidad de productos: 0
-                  </h1>
-                {% endif %}
-              </div>
-            {% endfor %}
-          </div>
-      
-          <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
-            <i class="bx bxs-dollar-circle text-2xl mr-2" style="color: white"></i>
-            {% for ventas in ventasTotales %}
-              <div class="my-2">
-                {% if ventas.CantidadVendida %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Ventas totales: {{ ventas.CantidadVendida }}
-                  </h1>
-                {% else %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Ventas totales: 0
-                  </h1>
-                {% endif %}
-              </div>
-            {% endfor %}
-          </div>
-      
-          <div class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center">
-            <i class="bx bxs-badge-dollar text-2xl mr-2" style="color: white"></i>
-            {% for ganancia in gananciasTotales %}
-              <div class="my-2">
-                {% if ganancia.GananciaTotal %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Ganancias totales: {{ ganancia.GananciaTotal }}$
-                  </h1>
-                {% else %}
-                  <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
-                    Ganancias totales: $0
-                  </h1>
-                {% endif %}
-              </div>
-            {% endfor %}
-          </div>
-      
-      
-        </div>
-      </div>
-      <div
-    class="graficas grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 ml-60"
-  >
-    <div class="w-full sm:w-96 mt-5">
-      <div class="graficas bg-white p-4 rounded-lg text-white mr-5">
-        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
-          Gráfico de productos con más ganancias
+<style>
+  body {
+    overflow: visible;
+  }
+</style>
+
+<div class="p-4 rounded-lg shadow-md datos">
+  <div class="flex items-center">
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bxs-dashboard text-2xl ml-4" style="color: white"></i>
+      {%for cantidad in cantidadProductos%}
+      <div class="my-2">
+        {% if cantidad.Cantidad %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Productos totales: {{ cantidad.Cantidad }}
         </h1>
-        <div class="text-center">
-          <canvas
-            id="graficoProductosMasGanancias"
-            style="max-height: 400px"
-          ></canvas>
-        </div>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Cantidad de productos: 0
+        </h1>
+        {% endif %}
       </div>
+      {% endfor %}
+    </div>
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bxs-dashboard text-2xl ml-4" style="color: white"></i>
+      {% for cantidad in stock %}
+      <div class="my-2">
+        {% if cantidad.Stock %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Productos en stock: {{ cantidad.Stock }}
+        </h1>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Productos en stock: 0
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bx-line-chart text-2xl ml-4" style="color: white"></i>
+      {% for producto in productos_mas_vendidos %}
+      <div class="my-2">
+        {% if producto.Producto %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto mas vendido: {{ producto.Producto }}
+        </h1>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto mas vendido: 0
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
 
-    <div class="w-full sm:w-96 mt-5">
-      <div class="graficas bg-white p-4 rounded-lg text-white">
-        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
-          Gráfico de fechas de ventas
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bx-line-chart-down text-2xl ml-4" style="color: white"></i>
+      {% for producto in producto_menos_vendido %}
+      <div class="my-2">
+        {% if producto.ProductoMV %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto menos vendido: {{ producto.ProductoMV }}
         </h1>
-        <div class="text-center">
-          <canvas id="graficoFechas" style="max-height: 400px"></canvas>
-        </div>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto menos vendido: No hay ventas
+        </h1>
+        {% endif %}
       </div>
+      {% endfor %}
     </div>
-    <div class="w-full sm:w-96 mt-5">
-      <div class="graficas bg-white p-4 rounded-lg text-white ml-5">
-        <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
-          Gráfico de productos más vendidos
+
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bx-line-chart text-2xl ml-4" style="color: white"></i>
+      {% for gananciaPlus in producto_mas_ganancias %}
+      <div class="my-2">
+        {% if gananciaPlus.ProductoTop%}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto con mas ganancia: {{ gananciaPlus.ProductoTop }}
         </h1>
-        <div class="text-center">
-          <canvas
-            id="graficoProductosMasVendido"
-            style="max-height: 400px"
-          ></canvas>
-        </div>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto con mas ganancia: 0
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bx-line-chart-down text-2xl ml-4" style="color: white"></i>
+      {% for producto in producto_menos_ganancia%}
+      <div class="my-2">
+        {% if producto.ProductoMG %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto con menos ganancia: {{ producto.ProductoMG }}
+        </h1>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Producto con menos ganancia: No hay ventas
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bxs-dollar-circle text-2xl mr-2" style="color: white"></i>
+      {% for ventas in ventasTotales %}
+      <div class="my-2">
+        {% if ventas.CantidadVendida %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Ventas totales: {{ ventas.CantidadVendida }}
+        </h1>
+        {% else %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Ventas totales: 0
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div
+      class="bg-white bg-opacity-5 p-4 rounded-lg shadow-md m-2 flex items-center w-full h-20"
+    >
+      <i class="bx bxs-badge-dollar text-2xl mr-2" style="color: white"></i>
+      {% for ganancia in gananciasTotales %}
+      <div class="my-2">
+        {% if ganancia.GananciaTotal %}
+        <h1 class="text-xs font-bold mb-4 text-white ml-2 mt-3">
+          Ganancias totales: {{ ganancia.GananciaTotal }}$
+        </h1>
+        {% else %}
+        <h1 class="text-2xl font-bold mb-4 text-white ml-2 mt-3">
+          Ganancias totales: $0
+        </h1>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<div
+  class="graficas grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2"
+>
+  <div class="w-full sm:w-96 mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white mr-5">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos con más ganancias (PASTEL)
+      </h1>
+      <div class="text-center">
+        <canvas
+          id="graficoProductosMasGananciasPie"
+          style="max-height: 400px"
+        ></canvas>
       </div>
     </div>
   </div>
-    {%endblock%}
+  <div class="w-full sm:w-96 mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white mr-5">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos con más ganancias
+      </h1>
+      <div class="text-center">
+        <canvas
+          id="graficoProductosMasGanancias"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="w-full sm:w-96 mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white ml-5">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos más vendidos 
+      </h1>
+      <div class="text-center">
+        <canvas
+          id="graficoProductosMasVendido"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="w-full sm:w-96 mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white ml-5">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos más vendidos (PASTEL)
+      </h1>
+      <div class="text-center">
+        <canvas
+          id="graficoProductosMasVendidoPie"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+  <div class="col-span-1 w-full sm:w-full mt-5 flex justify-end">
+    <div class="graficas bg-white p-4 rounded-lg text-white h-96 w-full">
+      <h1 class="text-2xl font-bold mb-4 text-black whitespace-no-wrap">
+        Gráfico de productos con mas cantidad en stock
+      </h1>
+      <div class="text-center mt-28">
+        <canvas
+          id="graficoProductosMasVendidos"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-span-1 w-full sm:w-full mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white h-96 w-full">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de fechas de ventas
+      </h1>
+      <div class="text-center mt-28">
+        <canvas id="graficoFechas" style="max-height: 400px"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-span-1 w-full sm:w-full mt-5 ">
+    <div class="graficas bg-white p-4 rounded-lg text-white h-96 w-full">
+      <h1 class="text-2xl font-bold mb-4 text-black whitespace-no-wrap">
+        Gráfico de productos con mas ventas
+      </h1>
+      <div class="text-center mt-28">
+        <canvas
+          id="graficoProductosMasVendidoBar"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-span-1 w-full sm:w-full mt-5">
+    <div class="graficas bg-white p-4 rounded-lg text-white h-96 w-full">
+      <h1 class="text-2xl font-bold mb-4 whitespace-no-wrap text-black">
+        Gráfico de productos con mas ganancia
+      </h1>
+      <div class="text-center mt-28">
+        <canvas
+          id="graficoProductosMasGananciasBar"
+          style="max-height: 400px"
+        ></canvas>
+      </div>
+    </div>
+</div>
+</div>
+
+
+
+{%endblock%}
