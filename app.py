@@ -235,7 +235,6 @@ def cambiar_foto():
         imagen_perfil = request.files['imagen_perfil']
 
         if imagen_perfil.filename != '':
-            # Guardar la imagen en una carpeta específica
             if imagen_perfil and allowed_file(imagen_perfil.filename):
                 filename = secure_filename(imagen_perfil.filename)
                 if not os.path.exists(app.config['USER_IMAGES_FOLDER']):
@@ -243,7 +242,6 @@ def cambiar_foto():
                 imagen_perfil.save(os.path.join(app.config['USER_IMAGES_FOLDER'], filename))
                 url_imagen_perfil = os.path.join(app.config['USER_IMAGES_FOLDER'], filename)
 
-                # Actualizar la URL de la imagen de perfil en la base de datos
                 db.execute("UPDATE Usuarios SET UrlImagenPerfil = ? WHERE id = ?", url_imagen_perfil, session['user_id'])
                 return redirect(url_for("index"))
 
@@ -373,13 +371,11 @@ def editar_producto(producto_id):
                 imagen.save(os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename))
                 url_imagen_producto = os.path.join(app.config['PRODUCT_IMAGES_FOLDER'], filename)
 
-                # Actualizar la URL de la imagen en la base de datos
                 actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion, url_imagen_producto)
             else:
                 flash('Formato de imagen no válido. Sube imágenes en formato PNG, JPG, JPEG o GIF.')
 
         else:
-            # Si no se selecciona una nueva imagen, mantener la imagen existente en la base de datos
             url_imagen_producto = producto['Imagen']
             actualizar_producto(producto_id, CategoriaID, NombreProducto, Cantidad, PrecioOriginal, PrecioVenta, FechaActualizacion)
 
@@ -396,9 +392,7 @@ def buscar_productos():
     correo = capturar_correo()
     query = request.args.get("query")
 
-    # Realiza la búsqueda de productos por nombre en la base de datos
     if query:
-        # Aquí utilizamos una consulta SQL para buscar productos por su nombre
         productos_encontrados = db.execute(
             "SELECT * FROM Inventario WHERE NombreProducto LIKE ?", f"%{query}%"
         )
@@ -465,10 +459,8 @@ def register():
 
         db.execute("INSERT INTO Usuarios (NombreUsuario, CorreoElectronico, Contraseña) VALUES (?, ?, ?)", name, email, hashpass)
 
-        # Devuelve un JSON para indicar el éxito del registro
         return jsonify({"success": True, "message": "¡Usuario registrado con éxito!"})
 
-    # Aquí puedes redirigir a la página de inicio de sesión si el método no es POST
     return redirect("/login")
 
 @app.route("/logout")
@@ -545,7 +537,6 @@ def vender_producto():
                 db.execute("INSERT INTO Ventas (FechaVenta, UsuarioID, NombreProductoVendido, TotalVentas, CantidadVendida) VALUES (CURRENT_DATE, ?, ?, ?, ?)",
                            UsuarioID, nombre_producto, ganancia_total, CantidadVendida)
 
-                # Devuelve un JSON para indicar el éxito de la venta
                 return jsonify({"success": True, "message": "¡Producto vendido con éxito!"})
             else:
                 return jsonify({"error": True, "message": "No hay suficiente cantidad en el inventario para vender."})
